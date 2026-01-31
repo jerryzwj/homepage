@@ -22,3 +22,24 @@ body {
 #app {
   width: 100%;
 }
+
+/* 禁用链接的默认装饰和图标 */
+a {
+  text-decoration: none !important;
+  background-image: none !important;
+  background-color: transparent !important;
+}
+
+/* 特别针对新窗口打开的链接 */
+a[target="_blank"] {
+  text-decoration: none !important;
+  background-image: none !important;
+  background-color: transparent !important;
+}
+
+/* 确保链接文本没有下划线或其他装饰 */
+a:hover, a:focus {
+  text-decoration: none !important;
+  background-image: none !important;
+  background-color: transparent !important;
+}

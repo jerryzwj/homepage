@@ -69,6 +69,9 @@ export async function onRequestPost(context) {
         continue; // 跳过无效书签
       }
       
+      // 确保分类名有默认值
+      const safeCategoryName = categoryName || '未分类';
+      
       // 检查是否已存在相同URL的书签
       const existingBookmark = await db.prepare(
         'SELECT bookmark_id FROM bookmarks WHERE user_id = ? AND url = ?'
@@ -80,9 +83,9 @@ export async function onRequestPost(context) {
       
       // 确保分类存在
       let cateId;
-      if (categoryMap.has(categoryName)) {
+      if (categoryMap.has(safeCategoryName)) {
         // 使用现有分类
-        cateId = categoryMap.get(categoryName);
+        cateId = categoryMap.get(safeCategoryName);
       } else {
         // 创建新分类
         const maxSortResult = await db.prepare(
@@ -95,7 +98,7 @@ export async function onRequestPost(context) {
           'INSERT INTO categories (user_id, cate_name, cate_desc, cate_cover, sort, is_public, create_time, update_time) VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)'
         ).bind(
           userId, 
-          categoryName, 
+          safeCategoryName, 
           '', 
           '', 
           sort, 
@@ -103,7 +106,7 @@ export async function onRequestPost(context) {
         ).run();
         
         cateId = newCategoryResult.meta.lastInsertRowid;
-        categoryMap.set(categoryName, cateId);
+        categoryMap.set(safeCategoryName, cateId);
       }
       
       // 获取当前分类下的最大排序值

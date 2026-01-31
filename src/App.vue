@@ -29,6 +29,16 @@
           <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4">
             <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">分类管理</h2>
             <div class="space-y-2" ref="categoriesContainer">
+              <!-- 全部选项 -->
+              <div 
+                class="flex items-center justify-between p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                @click="switchCategory(null)"
+              >
+                <div class="flex items-center gap-2">
+                  <span class="text-gray-700 dark:text-gray-300 font-medium">全部</span>
+                </div>
+              </div>
+              <!-- 分类列表 -->
               <div 
                 v-for="category in bookmarkStore.categories" 
                 :key="category.cate_id" 
@@ -85,20 +95,20 @@
         <!-- 收藏卡片区域 -->
         <div class="md:col-span-3">
           <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-6">
-            <div class="flex items-center justify-between mb-4">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
               <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
                 {{ bookmarkStore.currentCategory ? 
                     bookmarkStore.categories.find(c => c.cate_id === bookmarkStore.currentCategory)?.cate_name : 
                     '所有收藏' 
                 }}
               </h2>
-              <div class="flex items-center gap-2">
-                <div class="relative">
+              <div class="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+                <div class="relative flex-grow">
                   <input 
                     type="text" 
                     v-model="searchQuery" 
                     placeholder="搜索收藏..." 
-                    class="px-3 py-1 pr-8 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-700 dark:text-white"
+                    class="w-full px-3 py-2 pr-8 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-700 dark:text-white"
                     @input="handleSearch"
                   >
                   <button 
@@ -108,33 +118,32 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                   </button>
                 </div>
-                <button 
-                  v-if="userStore.isLoggedIn" 
-                  class="px-3 py-1 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 transition-colors"
-                  @click="openAddBookmarkModal"
-                >
-                  添加收藏
-                </button>
-                <button 
-                  v-if="userStore.isLoggedIn" 
-                  class="px-3 py-1 bg-purple-600 text-white rounded-md text-sm hover:bg-purple-700 transition-colors"
-                  @click="openImportModal"
-                >
-                  导入收藏
-                </button>
+                <div class="flex gap-2 w-full sm:w-auto">
+                  <button 
+                    v-if="userStore.isLoggedIn" 
+                    class="flex-1 sm:flex-none px-3 py-2 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 transition-colors"
+                    @click="openAddBookmarkModal"
+                  >
+                    添加收藏
+                  </button>
+                  <button 
+                    v-if="userStore.isLoggedIn" 
+                    class="flex-1 sm:flex-none px-3 py-2 bg-purple-600 text-white rounded-md text-sm hover:bg-purple-700 transition-colors"
+                    @click="openImportModal"
+                  >
+                    导入收藏
+                  </button>
+                </div>
               </div>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" ref="bookmarksContainer">
-              <div v-for="bookmark in bookmarkStore.bookmarks" :key="bookmark.bookmark_id" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow">
+              <div v-for="bookmark in bookmarkStore.bookmarks" :key="bookmark.bookmark_id" class="bg-white dark:bg-gray-600 rounded-lg p-4 hover:shadow-md transition-shadow">
                 <div class="flex items-start justify-between mb-2">
                   <div class="flex items-center gap-2">
-                    <img v-if="bookmark.icon" :src="bookmark.icon" alt="Favicon" class="w-4 h-4 rounded">
+                    <img v-if="bookmark.icon" :src="bookmark.icon" alt="Favicon" class="w-6 h-6 rounded">
                     <h3 class="font-medium text-gray-900 dark:text-white" v-html="highlightKeywords(bookmark.title, searchQuery)"></h3>
                   </div>
                   <div v-if="userStore.isLoggedIn" class="flex items-center gap-1">
-                    <button class="p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500 dark:text-gray-400"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                    </button>
                     <button 
                       class="p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded"
                       @click.stop="openEditBookmarkModal(bookmark)"
