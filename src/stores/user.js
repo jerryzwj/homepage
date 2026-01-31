@@ -20,13 +20,22 @@ export const useUserStore = defineStore('user', {
   
   actions: {
     async login() {
-      // Cloudflare Access会自动处理登录重定向
-      // 这里可以添加登录后的处理逻辑
+      // 从本地存储获取token
+      const token = localStorage.getItem('token')
+      
+      if (!token) {
+        this.isLoggedIn = false
+        return
+      }
+      
       this.isLoading = true
       try {
         // 登录后获取用户信息
         const response = await fetch('/api/users', {
           method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
           credentials: 'include'
         })
         
@@ -58,6 +67,7 @@ export const useUserStore = defineStore('user', {
           this.username = null
           this.avatar = null
           localStorage.removeItem('user')
+          localStorage.removeItem('token')
         }
       } catch (error) {
         console.error('登录失败:', error)
@@ -77,8 +87,9 @@ export const useUserStore = defineStore('user', {
       
       // 清除本地存储
       localStorage.removeItem('user')
+      localStorage.removeItem('token')
       
-      // 重定向到登录页面（Cloudflare Access会处理）
+      // 重定向到首页
       window.location.href = '/'
     },
     
@@ -98,10 +109,12 @@ export const useUserStore = defineStore('user', {
       // 如果已登录，同步到服务器
       if (this.isLoggedIn) {
         try {
+          const token = localStorage.getItem('token')
           await fetch('/api/users', {
             method: 'PUT',
             headers: {
-              'Content-Type': 'application/json'
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify({ dark_mode: this.darkMode ? 1 : 0 }),
             credentials: 'include'
@@ -115,12 +128,19 @@ export const useUserStore = defineStore('user', {
     init() {
       // 从本地存储恢复状态
       const savedUser = localStorage.getItem('user')
-      if (savedUser) {
+      const token = localStorage.getItem('token')
+      
+      if (savedUser && token) {
         const userData = JSON.parse(savedUser)
         this.userId = userData.userId
         this.username = userData.username
         this.avatar = userData.avatar
         this.isLoggedIn = true
+      } else {
+        this.isLoggedIn = false
+        this.userId = null
+        this.username = null
+        this.avatar = null
       }
       
       // 恢复黑暗模式设置

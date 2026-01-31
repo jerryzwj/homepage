@@ -21,8 +21,12 @@ export const useBookmarkStore = defineStore('bookmark', {
     async fetchCategories() {
       this.isLoading = true
       try {
+        const token = localStorage.getItem('token')
         const response = await fetch('/api/categories', {
           method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
           credentials: 'include'
         })
         
@@ -44,8 +48,12 @@ export const useBookmarkStore = defineStore('bookmark', {
           url += `?cate_id=${cateId}`
         }
         
+        const token = localStorage.getItem('token')
         const response = await fetch(url, {
           method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
           credentials: 'include'
         })
         
@@ -62,10 +70,12 @@ export const useBookmarkStore = defineStore('bookmark', {
     
     async createCategory(categoryData) {
       try {
+        const token = localStorage.getItem('token')
         const response = await fetch('/api/categories', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
           },
           body: JSON.stringify(categoryData),
           credentials: 'include'
@@ -84,10 +94,12 @@ export const useBookmarkStore = defineStore('bookmark', {
     
     async updateCategory(categoryData) {
       try {
+        const token = localStorage.getItem('token')
         const response = await fetch('/api/categories', {
           method: 'PUT',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
           },
           body: JSON.stringify(categoryData),
           credentials: 'include'
@@ -106,8 +118,12 @@ export const useBookmarkStore = defineStore('bookmark', {
     
     async deleteCategory(cateId) {
       try {
+        const token = localStorage.getItem('token')
         const response = await fetch(`/api/categories?id=${cateId}`, {
           method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
           credentials: 'include'
         })
         
@@ -125,10 +141,12 @@ export const useBookmarkStore = defineStore('bookmark', {
     
     async createBookmark(bookmarkData) {
       try {
+        const token = localStorage.getItem('token')
         const response = await fetch('/api/bookmarks', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
           },
           body: JSON.stringify(bookmarkData),
           credentials: 'include'
@@ -147,10 +165,12 @@ export const useBookmarkStore = defineStore('bookmark', {
     
     async updateBookmark(bookmarkData) {
       try {
+        const token = localStorage.getItem('token')
         const response = await fetch('/api/bookmarks', {
           method: 'PUT',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
           },
           body: JSON.stringify(bookmarkData),
           credentials: 'include'
@@ -169,8 +189,12 @@ export const useBookmarkStore = defineStore('bookmark', {
     
     async deleteBookmark(bookmarkId) {
       try {
+        const token = localStorage.getItem('token')
         const response = await fetch(`/api/bookmarks?id=${bookmarkId}`, {
           method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
           credentials: 'include'
         })
         
@@ -181,6 +205,28 @@ export const useBookmarkStore = defineStore('bookmark', {
         return false
       } catch (error) {
         console.error('删除收藏失败:', error)
+        return false
+      }
+    },
+    
+    async searchBookmarks(query) {
+      try {
+        const token = localStorage.getItem('token')
+        const response = await fetch(`/api/bookmarks/search?q=${encodeURIComponent(query)}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          credentials: 'include'
+        })
+        
+        if (response.ok) {
+          this.bookmarks = await response.json()
+          return true
+        }
+        return false
+      } catch (error) {
+        console.error('搜索收藏失败:', error)
         return false
       }
     },

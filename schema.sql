@@ -2,6 +2,7 @@
 CREATE TABLE IF NOT EXISTS users (
   user_id TEXT PRIMARY KEY,
   username TEXT,
+  password TEXT,
   avatar TEXT,
   dark_mode INTEGER DEFAULT 0,
   create_time DATETIME DEFAULT CURRENT_TIMESTAMP,

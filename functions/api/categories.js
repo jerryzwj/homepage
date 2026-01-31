@@ -1,7 +1,32 @@
+// 从请求头获取token
+function getTokenFromRequest(request) {
+  const authHeader = request.headers.get('Authorization');
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    return authHeader.substring(7);
+  }
+  return null;
+}
+
+// 验证JWT token
+function verifyToken(token) {
+  try {
+    const payload = JSON.parse(atob(token));
+    if (payload.exp < Math.floor(Date.now() / 1000)) {
+      return null;
+    }
+    return payload.user_id;
+  } catch (error) {
+    return null;
+  }
+}
+
 export async function onRequestGet(context) {
   // 获取分类列表
   const { request, env } = context;
-  const userId = request.headers.get('CF-Access-Identity');
+  
+  // 从请求头获取token
+  const token = getTokenFromRequest(request);
+  const userId = verifyToken(token);
   
   if (!userId) {
     return new Response(JSON.stringify({ error: '未登录' }), {
@@ -30,7 +55,10 @@ export async function onRequestGet(context) {
 export async function onRequestPost(context) {
   // 创建分类
   const { request, env } = context;
-  const userId = request.headers.get('CF-Access-Identity');
+  
+  // 从请求头获取token
+  const token = getTokenFromRequest(request);
+  const userId = verifyToken(token);
   
   if (!userId) {
     return new Response(JSON.stringify({ error: '未登录' }), {
@@ -75,7 +103,10 @@ export async function onRequestPost(context) {
 export async function onRequestPut(context) {
   // 更新分类
   const { request, env } = context;
-  const userId = request.headers.get('CF-Access-Identity');
+  
+  // 从请求头获取token
+  const token = getTokenFromRequest(request);
+  const userId = verifyToken(token);
   
   if (!userId) {
     return new Response(JSON.stringify({ error: '未登录' }), {
@@ -114,7 +145,10 @@ export async function onRequestPut(context) {
 export async function onRequestDelete(context) {
   // 删除分类
   const { request, env } = context;
-  const userId = request.headers.get('CF-Access-Identity');
+  
+  // 从请求头获取token
+  const token = getTokenFromRequest(request);
+  const userId = verifyToken(token);
   
   if (!userId) {
     return new Response(JSON.stringify({ error: '未登录' }), {

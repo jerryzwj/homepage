@@ -1,9 +1,32 @@
+// 从请求头获取token
+function getTokenFromRequest(request) {
+  const authHeader = request.headers.get('Authorization');
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    return authHeader.substring(7);
+  }
+  return null;
+}
+
+// 验证JWT token
+function verifyToken(token) {
+  try {
+    const payload = JSON.parse(atob(token));
+    if (payload.exp < Math.floor(Date.now() / 1000)) {
+      return null;
+    }
+    return payload.user_id;
+  } catch (error) {
+    return null;
+  }
+}
+
 export async function onRequestGet(context) {
   // 获取收藏列表
   const { request, env } = context;
-  const userId = request.headers.get('CF-Access-Identity');
-  const url = new URL(request.url);
-  const cateId = url.searchParams.get('cate_id');
+  
+  // 从请求头获取token
+  const token = getTokenFromRequest(request);
+  const userId = verifyToken(token);
   
   if (!userId) {
     return new Response(JSON.stringify({ error: '未登录' }), {
@@ -13,6 +36,8 @@ export async function onRequestGet(context) {
   }
   
   try {
+    const url = new URL(request.url);
+    const cateId = url.searchParams.get('cate_id');
     const db = env.DB;
     let query = 'SELECT * FROM bookmarks WHERE user_id = ?';
     let params = [userId];
@@ -40,7 +65,10 @@ export async function onRequestGet(context) {
 export async function onRequestPost(context) {
   // 创建收藏
   const { request, env } = context;
-  const userId = request.headers.get('CF-Access-Identity');
+  
+  // 从请求头获取token
+  const token = getTokenFromRequest(request);
+  const userId = verifyToken(token);
   
   if (!userId) {
     return new Response(JSON.stringify({ error: '未登录' }), {
@@ -99,7 +127,10 @@ export async function onRequestPost(context) {
 export async function onRequestPut(context) {
   // 更新收藏
   const { request, env } = context;
-  const userId = request.headers.get('CF-Access-Identity');
+  
+  // 从请求头获取token
+  const token = getTokenFromRequest(request);
+  const userId = verifyToken(token);
   
   if (!userId) {
     return new Response(JSON.stringify({ error: '未登录' }), {
@@ -139,7 +170,10 @@ export async function onRequestPut(context) {
 export async function onRequestDelete(context) {
   // 删除收藏
   const { request, env } = context;
-  const userId = request.headers.get('CF-Access-Identity');
+  
+  // 从请求头获取token
+  const token = getTokenFromRequest(request);
+  const userId = verifyToken(token);
   
   if (!userId) {
     return new Response(JSON.stringify({ error: '未登录' }), {
