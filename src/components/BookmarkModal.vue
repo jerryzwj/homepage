@@ -194,16 +194,34 @@ const fetchUrlInfo = async () => {
   
   isFetching.value = true
   try {
-    // 这里应该调用后端API来抓取网页信息
-    // 为了演示，我们模拟一个延迟并设置一些默认值
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    // 调用后端API来抓取网页信息
+    const response = await fetch('/api/fetch-url', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ url: form.url })
+    })
     
-    // 模拟抓取结果
-    form.title = form.title || new URL(form.url).hostname
-    form.description = form.description || `来自 ${new URL(form.url).hostname} 的链接`
-    form.icon = form.icon || `https://www.google.com/s2/favicons?domain=${new URL(form.url).hostname}&sz=64`
+    if (response.ok) {
+      const urlInfo = await response.json()
+      form.title = form.title || urlInfo.title
+      form.description = form.description || urlInfo.description
+      form.icon = form.icon || urlInfo.icon
+    } else {
+      // 如果API调用失败，使用备用方案
+      const hostname = new URL(form.url).hostname
+      form.title = form.title || hostname
+      form.description = form.description || `来自 ${hostname} 的链接`
+      form.icon = form.icon || `https://www.google.com/s2/favicons?domain=${hostname}&sz=64`
+    }
   } catch (error) {
     console.error('抓取网址信息失败:', error)
+    // 抓取失败时使用默认值
+    const hostname = new URL(form.url).hostname
+    form.title = form.title || hostname
+    form.description = form.description || `来自 ${hostname} 的链接`
+    form.icon = form.icon || `https://www.google.com/s2/favicons?domain=${hostname}&sz=64`
   } finally {
     isFetching.value = false
   }

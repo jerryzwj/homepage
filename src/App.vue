@@ -127,7 +127,10 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" ref="bookmarksContainer">
               <div v-for="bookmark in bookmarkStore.bookmarks" :key="bookmark.bookmark_id" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow">
                 <div class="flex items-start justify-between mb-2">
-                  <h3 class="font-medium text-gray-900 dark:text-white" v-html="highlightKeywords(bookmark.title, searchQuery)"></h3>
+                  <div class="flex items-center gap-2">
+                    <img v-if="bookmark.icon" :src="bookmark.icon" alt="Favicon" class="w-4 h-4 rounded">
+                    <h3 class="font-medium text-gray-900 dark:text-white" v-html="highlightKeywords(bookmark.title, searchQuery)"></h3>
+                  </div>
                   <div v-if="userStore.isLoggedIn" class="flex items-center gap-1">
                     <button class="p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded">
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500 dark:text-gray-400"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
@@ -147,7 +150,7 @@
                   </div>
                 </div>
                 <p class="text-sm text-gray-600 dark:text-gray-400 mb-3" v-html="highlightKeywords(bookmark.description, searchQuery)"></p>
-                <a :href="bookmark.url" target="_blank" rel="noopener noreferrer" class="text-sm text-blue-600 dark:text-blue-400 hover:underline truncate block mb-2" v-html="highlightKeywords(bookmark.url, searchQuery)"></a>
+                <a :href="bookmark.url" target="_blank" rel="noopener noreferrer" class="text-sm text-blue-600 dark:text-blue-400 truncate block mb-2" v-html="highlightKeywords(bookmark.url, searchQuery)"></a>
                 <div class="flex flex-wrap gap-1">
                   <span v-for="tag in bookmark.tags.split(',')" :key="tag" class="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded">
                     {{ tag }}
@@ -408,15 +411,20 @@ const deleteCategory = async (cateId) => {
 
 // 打开添加收藏模态框
 const openAddBookmarkModal = () => {
+  // 重置表单状态
   isEditingBookmark.value = false
   currentBookmark.value = null
+  // 打开模态框
   isBookmarkModalOpen.value = true
 }
 
 // 打开编辑收藏模态框
 const openEditBookmarkModal = (bookmark) => {
+  // 设置编辑状态
   isEditingBookmark.value = true
-  currentBookmark.value = bookmark
+  // 复制bookmark对象，避免直接修改原始数据
+  currentBookmark.value = { ...bookmark }
+  // 打开模态框
   isBookmarkModalOpen.value = true
 }
 
@@ -561,43 +569,53 @@ const handleImport = async () => {
         // 解析HTML内容，提取书签数据
         const parser = new DOMParser()
         const doc = parser.parseFromString(htmlContent, 'text/html')
-        const bookmarkNodes = doc.querySelectorAll('a')
         
         // 构建导入数据
         const importData = []
-        let currentCategory = '未分类'
         
         // 提取文件夹（分类）信息
         const folderNodes = doc.querySelectorAll('h3')
-        folderNodes.forEach((folderNode, index) => {
-          currentCategory = folderNode.textContent
+        folderNodes.forEach(folderNode => {
+          const categoryName = folderNode.textContent
           // 找到该文件夹下的所有书签
           let nextNode = folderNode.nextElementSibling
           while (nextNode && nextNode.tagName !== 'H3') {
             const links = nextNode.querySelectorAll('a')
             links.forEach(link => {
-              importData.push({
-                title: link.textContent,
-                url: link.getAttribute('href'),
-                category: currentCategory,
-                description: link.getAttribute('title') || '',
-                tags: ''
-              })
+              const title = link.textContent
+              const url = link.getAttribute('href')
+              if (title && url) {
+                importData.push({
+                  title: title,
+                  url: url,
+                  category: categoryName,
+                  description: link.getAttribute('title') || '',
+                  tags: ''
+                })
+              }
             })
             nextNode = nextNode.nextElementSibling
           }
         })
         
         // 处理根级书签
-        const rootLinks = doc.querySelectorAll('body > a')
+        const rootLinks = doc.querySelectorAll('a')
         rootLinks.forEach(link => {
-          importData.push({
-            title: link.textContent,
-            url: link.getAttribute('href'),
-            category: '未分类',
-            description: link.getAttribute('title') || '',
-            tags: ''
-          })
+          const title = link.textContent
+          const url = link.getAttribute('href')
+          if (title && url) {
+            // 检查是否已经在文件夹中处理过
+            const isAlreadyProcessed = importData.some(item => item.url === url)
+            if (!isAlreadyProcessed) {
+              importData.push({
+                title: title,
+                url: url,
+                category: '未分类',
+                description: link.getAttribute('title') || '',
+                tags: ''
+              })
+            }
+          }
         })
         
         // 发送导入请求到后端
