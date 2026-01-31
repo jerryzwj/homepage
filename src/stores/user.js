@@ -51,9 +51,18 @@ export const useUserStore = defineStore('user', {
           } else {
             document.documentElement.classList.remove('dark')
           }
+        } else if (response.status === 401) {
+          // 用户未登录，清除本地存储
+          this.isLoggedIn = false
+          this.userId = null
+          this.username = null
+          this.avatar = null
+          localStorage.removeItem('user')
         }
       } catch (error) {
         console.error('登录失败:', error)
+        // 发生错误时，确保登录状态为false
+        this.isLoggedIn = false
       } finally {
         this.isLoading = false
       }

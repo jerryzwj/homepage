@@ -168,9 +168,17 @@ const isBookmarkModalOpen = ref(false)
 const isEditingBookmark = ref(false)
 const currentBookmark = ref(null)
 
-onMounted(() => {
+onMounted(async () => {
   // 初始化用户状态
   userStore.init()
+  
+  // 尝试获取用户信息，即使本地存储中没有用户信息
+  // 这样可以处理用户通过Cloudflare Access登录后重定向回来的情况
+  try {
+    await userStore.login()
+  } catch (error) {
+    console.error('获取用户信息失败:', error)
+  }
   
   // 如果已登录，加载分类和收藏数据
   if (userStore.isLoggedIn) {
