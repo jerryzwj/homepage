@@ -117,6 +117,11 @@ export async function onRequestPost(context) {
         'INSERT INTO users (user_id, username, password, dark_mode, create_time, update_time) VALUES (?, ?, ?, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)'
       ).bind(userId, username, hashedPassword).run();
       
+      // 为新用户创建默认分类
+      await db.prepare(
+        'INSERT INTO categories (user_id, cate_name, cate_desc, cate_cover, sort, create_time, update_time) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)'
+      ).bind(userId, '未分类', '默认分类', '', 1).run();
+      
       // 生成token
       const token = generateToken(userId);
       

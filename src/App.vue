@@ -374,6 +374,11 @@ watch(() => userStore.isLoggedIn, (isLoggedIn) => {
 const loadData = async () => {
   await bookmarkStore.fetchCategories()
   await bookmarkStore.fetchBookmarks()
+  
+  // 检查是否有分类，如果没有，显示提示信息
+  if (bookmarkStore.categories.length === 0) {
+    console.log('用户暂无分类，将显示默认提示')
+  }
 }
 
 // 切换分类
