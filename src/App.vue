@@ -183,7 +183,7 @@
                 </div>
               </div>
             </div>
-            <div v-if="bookmarkStore.bookmarks.length === 0" class="text-center py-12 text-gray-500 dark:text-gray-400">
+            <div v-if="!bookmarkStore.bookmarks || bookmarkStore.bookmarks.length === 0" class="text-center py-12 text-gray-500 dark:text-gray-400">
               <p v-if="userStore.isLoggedIn">暂无收藏，点击「添加收藏」开始</p>
               <p v-else>登录后查看和管理收藏</p>
             </div>
@@ -376,7 +376,7 @@ const loadData = async () => {
   await bookmarkStore.fetchBookmarks()
   
   // 检查是否有分类，如果没有，显示提示信息
-  if (bookmarkStore.categories.length === 0) {
+  if (!bookmarkStore.categories || bookmarkStore.categories.length === 0) {
     console.log('用户暂无分类，将显示默认提示')
   }
 }
@@ -767,7 +767,7 @@ const toggleSelectAll = () => {
     return
   }
   
-  if (selectedBookmarks.value.length === bookmarkStore.bookmarks.length) {
+  if (selectedBookmarks.value.length === (bookmarkStore.bookmarks?.length || 0)) {
     // 取消全选
     selectedBookmarks.value = []
   } else {
