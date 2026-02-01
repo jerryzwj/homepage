@@ -702,8 +702,8 @@ const exportBookmarks = async () => {
     
     // 按分类组织书签
     const bookmarksByCategory = {}
-    bookmarkStore.bookmarks.forEach(bookmark => {
-      const categoryName = bookmarkStore.categories.find(c => c.cate_id === bookmark.cate_id)?.cate_name || '未分类'
+    (bookmarkStore.bookmarks || []).forEach(bookmark => {
+      const categoryName = (bookmarkStore.categories || []).find(c => c.cate_id === bookmark.cate_id)?.cate_name || '未分类'
       if (!bookmarksByCategory[categoryName]) {
         bookmarksByCategory[categoryName] = []
       }
@@ -776,7 +776,7 @@ const toggleSelectAll = () => {
     selectedBookmarks.value = []
   } else {
     // 全选
-    selectedBookmarks.value = bookmarkStore.bookmarks.map(bookmark => bookmark.bookmark_id)
+    selectedBookmarks.value = (bookmarkStore.bookmarks || []).map(bookmark => bookmark.bookmark_id)
   }
 }
 
