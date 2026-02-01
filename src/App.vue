@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-    <header class="bg-white dark:bg-gray-800 shadow-sm">
+    <header class="bg-white dark:bg-gray-700 shadow-sm">
       <div class="container mx-auto px-4 py-4 flex justify-between items-center">
         <h1 class="text-2xl font-bold text-gray-900 dark:text-white">收藏夹 Homepage</h1>
         <div class="flex items-center gap-4">
@@ -26,7 +26,7 @@
       <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
         <!-- 分类侧边栏 -->
         <div class="md:col-span-1">
-          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4">
+          <div class="bg-white dark:bg-gray-700 rounded-lg shadow-sm p-4">
             <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">分类管理</h2>
             <div class="space-y-2" ref="categoriesContainer">
               <!-- 全部选项 -->
@@ -80,7 +80,7 @@
         
         <!-- 收藏卡片区域 -->
         <div class="md:col-span-3">
-          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-6">
+          <div class="bg-white dark:bg-gray-700 rounded-lg shadow-sm p-4 mb-6">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
               <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
                 {{ bookmarkStore.currentCategory ? 
@@ -123,7 +123,7 @@
               </div>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" ref="bookmarksContainer">
-              <div v-for="bookmark in bookmarkStore.bookmarks" :key="bookmark.bookmark_id" class="bg-white dark:bg-gray-600 rounded-lg p-4 hover:shadow-md transition-shadow border border-gray-200 dark:border-gray-500">
+              <div v-for="bookmark in bookmarkStore.bookmarks" :key="bookmark.bookmark_id" class="bg-white dark:bg-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow border border-gray-200 dark:border-gray-500">
                 <div class="flex items-start justify-between mb-2">
                   <div class="flex items-center gap-2">
                     <img v-if="bookmark.icon" :src="bookmark.icon" alt="Favicon" class="w-6 h-6 rounded">
@@ -192,7 +192,7 @@
     
     <!-- 导入模态框 -->
     <div v-if="isImportModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-md">
+      <div class="bg-white dark:bg-gray-700 rounded-lg shadow-lg w-full max-w-md">
         <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white">导入收藏</h3>
           <button @click="closeImportModal" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
