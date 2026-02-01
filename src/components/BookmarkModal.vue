@@ -205,28 +205,41 @@ const fetchUrlInfo = async () => {
   
   isFetching.value = true
   try {
-    // 调用后端API来抓取网页信息
-    const response = await fetch('/api/fetch-url', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ url: form.url })
-    })
+    // 检测是否为局域网IP
+    const url = new URL(form.url)
+    const hostname = url.hostname
     
-    if (response.ok) {
-      const urlInfo = await response.json()
-      // 直接替换，无论输入框是否已有内容
-      form.title = urlInfo.title
-      form.description = urlInfo.description
-      form.icon = urlInfo.icon
-    } else {
-      // 如果API调用失败，使用备用方案
-      const hostname = new URL(form.url).hostname
-      // 直接替换，无论输入框是否已有内容
+    // 局域网IP正则表达式
+    const isLocalNetwork = /^(10\.|172\.(1[6-9]|2[0-9]|3[01])\.|192\.168\.|127\.|localhost|::1)$/.test(hostname)
+    
+    if (isLocalNetwork) {
+      // 对于局域网IP，直接使用备用方案
       form.title = hostname
-      form.description = `来自 ${hostname} 的链接`
+      form.description = `来自局域网 ${hostname} 的链接`
       form.icon = `https://www.google.com/s2/favicons?domain=${hostname}&sz=64`
+    } else {
+      // 调用后端API来抓取网页信息
+      const response = await fetch('/api/fetch-url', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ url: form.url })
+      })
+      
+      if (response.ok) {
+        const urlInfo = await response.json()
+        // 直接替换，无论输入框是否已有内容
+        form.title = urlInfo.title
+        form.description = urlInfo.description
+        form.icon = urlInfo.icon
+      } else {
+        // 如果API调用失败，使用备用方案
+        // 直接替换，无论输入框是否已有内容
+        form.title = hostname
+        form.description = `来自 ${hostname} 的链接`
+        form.icon = `https://www.google.com/s2/favicons?domain=${hostname}&sz=64`
+      }
     }
   } catch (error) {
     console.error('抓取网址信息失败:', error)
