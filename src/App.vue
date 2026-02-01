@@ -40,7 +40,7 @@
               </div>
               <!-- 分类列表 -->
               <div 
-                v-for="category in bookmarkStore.categories" 
+                v-for="category in (bookmarkStore.categories || [])" 
                 :key="category.cate_id" 
                 class="flex items-center justify-between p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
                 @click="switchCategory(category.cate_id)"
@@ -146,7 +146,7 @@
               </div>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" ref="bookmarksContainer">
-              <div v-for="bookmark in bookmarkStore.bookmarks" :key="bookmark.bookmark_id" class="bg-white dark:bg-gray-600 rounded-lg p-4 hover:shadow-md transition-shadow border border-gray-200 dark:border-gray-500">
+              <div v-for="bookmark in (bookmarkStore.bookmarks || [])" :key="bookmark.bookmark_id" class="bg-white dark:bg-gray-600 rounded-lg p-4 hover:shadow-md transition-shadow border border-gray-200 dark:border-gray-500">
                 <div class="flex items-start justify-between mb-2">
                   <div class="flex items-center gap-2">
                     <input 
