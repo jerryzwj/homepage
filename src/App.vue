@@ -152,8 +152,8 @@
                 </div>
               </div>
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" ref="bookmarksContainer">
-              <div v-for="bookmark in bookmarkStore.bookmarks" :key="bookmark.bookmark_id" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow border border-gray-200 dark:border-gray-500">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4" ref="bookmarksContainer">
+              <div v-for="bookmark in bookmarkStore.bookmarks" :key="bookmark.bookmark_id" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 hover:shadow-md transition-shadow border border-gray-200 dark:border-gray-500">
                 <div class="flex items-start justify-between mb-2">
                   <div class="flex items-center gap-2">
                     <img v-if="bookmark.icon" :src="bookmark.icon" alt="Favicon" class="w-6 h-6 rounded">
@@ -174,15 +174,7 @@
                     </button>
                   </div>
                 </div>
-                <div class="text-sm text-gray-600 dark:text-gray-400 mb-3" style="max-height: 2.5rem; overflow: hidden; position: relative;">
-                  <p style="margin: 0;" v-html="highlightKeywords(bookmark.description, searchQuery)"></p>
-                </div>
-                <a :href="bookmark.url" target="_blank" rel="noopener noreferrer" class="text-sm text-blue-600 dark:text-blue-400 truncate block mb-2" v-html="highlightKeywords(bookmark.url, searchQuery)"></a>
-                <div v-if="bookmark.tags && bookmark.tags.split(',').filter(tag => tag.trim()).length > 0" class="flex flex-wrap gap-1">
-                  <span v-for="tag in bookmark.tags.split(',').filter(tag => tag.trim())" :key="tag" class="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded">
-                    {{ tag }}
-                  </span>
-                </div>
+                <a :href="bookmark.url" target="_blank" rel="noopener noreferrer" class="text-sm text-blue-600 dark:text-blue-400 truncate block" v-html="highlightKeywords(bookmark.url, searchQuery)"></a>
               </div>
             </div>
             <div v-if="bookmarkStore.bookmarks.length === 0" class="text-center py-12 text-gray-500 dark:text-gray-400">
