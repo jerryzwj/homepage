@@ -144,8 +144,9 @@ export async function onRequestPut(context) {
     const db = env.DB;
     
     await db.prepare(
-      'UPDATE bookmarks SET title = ?, url = ?, icon = ?, description = ?, tags = ?, update_time = CURRENT_TIMESTAMP WHERE bookmark_id = ? AND user_id = ?'
+      'UPDATE bookmarks SET cate_id = ?, title = ?, url = ?, icon = ?, description = ?, tags = ?, update_time = CURRENT_TIMESTAMP WHERE bookmark_id = ? AND user_id = ?'
     ).bind(
+      body.cate_id, 
       body.title, 
       body.url, 
       body.icon || '', 
