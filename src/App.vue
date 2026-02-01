@@ -164,7 +164,7 @@
                 <!-- 分类卡片组 -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                   <div v-for="bookmark in bookmarkStore.bookmarks.filter(b => b.cate_id === category.cate_id)" :key="bookmark.bookmark_id" class="bg-blue-100 dark:bg-purple-900/30 rounded-xl p-3 hover:shadow-md transition-shadow border border-blue-200 dark:border-purple-700 cursor-pointer"
-                       @click="window.location.href = bookmark.url">
+                       @click="goToBookmark(bookmark.url)">
                     <div class="flex items-start justify-between mb-2">
                       <div class="flex items-center gap-2 flex-1 min-w-0">
                         <div class="w-6 h-6 rounded-full flex items-center justify-center bg-blue-200 dark:bg-purple-800 text-blue-700 dark:text-purple-200 text-xs font-medium">
@@ -200,7 +200,7 @@
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                   <div v-for="bookmark in bookmarkStore.bookmarks.filter(b => !b.cate_id || b.cate_id === '')" :key="bookmark.bookmark_id" class="bg-blue-100 dark:bg-purple-900/30 rounded-xl p-3 hover:shadow-md transition-shadow border border-blue-200 dark:border-purple-700 cursor-pointer"
-                       @click="window.location.href = bookmark.url">
+                       @click="goToBookmark(bookmark.url)">
                     <div class="flex items-start justify-between mb-2">
                       <div class="flex items-center gap-2 flex-1 min-w-0">
                         <div class="w-6 h-6 rounded-full flex items-center justify-center bg-blue-200 dark:bg-purple-800 text-blue-700 dark:text-purple-200 text-xs font-medium">
@@ -230,7 +230,7 @@
             </div>
             <div v-else-if="bookmarkStore.bookmarks.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4" ref="bookmarksContainer">
               <div v-for="bookmark in bookmarkStore.bookmarks" :key="bookmark.bookmark_id" class="bg-blue-100 dark:bg-purple-900/30 rounded-xl p-3 hover:shadow-md transition-shadow border border-blue-200 dark:border-purple-700 cursor-pointer"
-                   @click="window.location.href = bookmark.url">
+                   @click="goToBookmark(bookmark.url)">
                 <div class="flex items-start justify-between mb-2">
                   <div class="flex items-center gap-2 flex-1 min-w-0">
                     <div class="w-6 h-6 rounded-full flex items-center justify-center bg-blue-200 dark:bg-purple-800 text-blue-700 dark:text-purple-200 text-xs font-medium">
@@ -975,6 +975,12 @@ const handleExport = async () => {
   } catch (error) {
     exportError.value = '导出失败: ' + error.message
   }
+}
+
+// 跳转到书签链接
+const goToBookmark = (url) => {
+  console.log('跳转到:', url)
+  window.open(url, '_blank', 'noopener,noreferrer')
 }
 
 
