@@ -1,51 +1,70 @@
-# 收藏夹 Homepage 应用
+# 收藏夹 Homepage 应用 📁
 
-基于 Cloudflare Pages + D1 的个人收藏夹管理应用，支持分类管理、登录验证、访客权限、拖动排序、黑暗模式等功能。
+基于 Cloudflare Pages + D1 的个人收藏夹管理应用，支持分类管理、登录验证、访客权限、拖动排序、黑暗模式等功能，为您提供高效、美观的收藏管理体验。
 
-## 技术栈
+## 🎯 项目特点
 
-- **前端**：Vue3 + Vite + Tailwind CSS + Pinia + SortableJS
-- **后端**：Cloudflare Pages Functions
-- **数据库**：Cloudflare D1 (SQLite)
-- **登录验证**：用户名/密码认证
+- **现代化技术栈**：Vue3 + Vite + Tailwind CSS + Pinia
+- **云原生架构**：Cloudflare Pages + Functions + D1
+- **响应式设计**：完美适配电脑、平板、手机等多种设备
+- **用户友好**：直观的界面设计，流畅的交互体验
+- **安全可靠**：用户数据隔离，密码加密存储
 
-## 核心功能
+## 🛠️ 技术栈
 
-### 1. 登录验证与权限控制
+| 分类 | 技术 | 版本 |
+|------|------|------|
+| 前端框架 | Vue | 3.x |
+| 构建工具 | Vite | 6.x |
+| CSS 框架 | Tailwind CSS | 3.x |
+| 状态管理 | Pinia | 2.x |
+| 拖拽排序 | SortableJS | 1.15.x |
+| 后端 | Cloudflare Pages Functions | - |
+| 数据库 | Cloudflare D1 (SQLite) | - |
+| 认证 | JWT | - |
+
+## ✨ 核心功能
+
+### 1. 🔐 登录验证与权限控制
 - 基于用户名/密码的传统认证系统
 - 登录用户拥有全权限，访客仅能浏览公开分类
 - 用户数据隔离，确保数据安全
 - 密码加密存储，保障用户账户安全
 
-### 2. 分类管理
-- 分类的增删改查
-- 拖拽排序功能
+### 2. 📂 分类管理
+- 分类的增删改查操作
+- 拖拽排序功能，自定义分类顺序
 - 公开/私有设置，支持访客浏览
 
-### 3. 收藏卡片管理
-- 收藏的增删改查
+### 3. 📄 收藏卡片管理
+- 收藏的增删改查操作
 - 自动抓取网页信息（标题、描述、图标）
 - 标签管理，支持多标签
+- 卡片点击在新标签页打开链接
 
-### 4. 卡片拖动排序
-- 基于 SortableJS 实现的拖拽排序
-- 同分类内的卡片排序
-- 排序状态持久化
-
-### 5. 黑暗模式
+### 4. 🎨 视觉设计
 - 亮色/黑暗模式切换
 - 系统主题跟随
-- 设置持久化保存
+- 卡片使用首字母作为图标
+- 名称显示不换行，太长自动隐藏
+- 容器一行显示5个卡片
 
-### 6. 响应式设计
+### 5. 📱 响应式设计
 - 适配电脑、平板、手机等多种设备
 - 流畅的布局切换
+- 优化的移动端体验
 
-## 项目结构
+### 6. 🚀 其他功能
+- 书签导入/导出功能
+- 关键词搜索
+- 标签筛选
+- 数据持久化存储
+
+## 📁 项目结构
 
 ```
 homepage/
-├── src/
+├── src/                    # 前端源代码
 │   ├── components/         # Vue 组件
 │   │   ├── AuthModal.vue        # 登录/注册模态框
 │   │   ├── BookmarkModal.vue    # 收藏管理模态框
@@ -73,7 +92,7 @@ homepage/
 └── dist/                   # 生产环境构建文件
 ```
 
-## 安装与部署
+## 📦 安装与部署
 
 ### 1. 本地开发
 
@@ -120,7 +139,7 @@ npm run dev
    - 代码推送后，Cloudflare 会自动构建并部署
    - 部署完成后，你可以通过分配的域名访问应用
 
-## 使用说明
+## 📖 使用说明
 
 ### 1. 首次登录
 - 访问应用域名，点击右上角的「登录」按钮
@@ -144,6 +163,7 @@ npm run dev
 - 点击收藏卡片上的编辑按钮修改收藏信息
 - 点击删除按钮删除收藏
 - 拖拽卡片调整排序顺序
+- 点击卡片在新标签页打开链接
 
 ### 5. 切换主题
 - 点击右上角的主题切换按钮
@@ -154,42 +174,48 @@ npm run dev
 - 分享应用链接给其他用户
 - 其他用户无需登录即可浏览公开分类
 
-## 数据库表结构
+## 🗄️ 数据库表结构
 
 ### users 表
-- `user_id` (TEXT): 用户唯一标识
-- `username` (TEXT): 用户名
-- `password` (TEXT): 密码（加密存储）
-- `avatar` (TEXT): 头像地址
-- `dark_mode` (INTEGER): 黑暗模式设置
-- `create_time` (DATETIME): 创建时间
-- `update_time` (DATETIME): 更新时间
+| 字段名 | 数据类型 | 描述 |
+|--------|---------|------|
+| `user_id` | TEXT | 用户唯一标识 |
+| `username` | TEXT | 用户名 |
+| `password` | TEXT | 密码（加密存储） |
+| `avatar` | TEXT | 头像地址 |
+| `dark_mode` | INTEGER | 黑暗模式设置 |
+| `create_time` | DATETIME | 创建时间 |
+| `update_time` | DATETIME | 更新时间 |
 
 ### categories 表
-- `cate_id` (INTEGER): 分类 ID
-- `user_id` (TEXT): 关联用户
-- `cate_name` (TEXT): 分类名称
-- `cate_desc` (TEXT): 分类描述
-- `cate_cover` (TEXT): 分类封面
-- `sort` (INTEGER): 排序值
-- `is_public` (INTEGER): 是否公开
-- `create_time` (DATETIME): 创建时间
-- `update_time` (DATETIME): 更新时间
+| 字段名 | 数据类型 | 描述 |
+|--------|---------|------|
+| `cate_id` | INTEGER | 分类 ID |
+| `user_id` | TEXT | 关联用户 |
+| `cate_name` | TEXT | 分类名称 |
+| `cate_desc` | TEXT | 分类描述 |
+| `cate_cover` | TEXT | 分类封面 |
+| `sort` | INTEGER | 排序值 |
+| `is_public` | INTEGER | 是否公开 |
+| `create_time` | DATETIME | 创建时间 |
+| `update_time` | DATETIME | 更新时间 |
 
 ### bookmarks 表
-- `bookmark_id` (INTEGER): 收藏 ID
-- `cate_id` (INTEGER): 关联分类
-- `user_id` (TEXT): 关联用户
-- `title` (TEXT): 网页标题
-- `url` (TEXT): 网页地址
-- `icon` (TEXT): 网页图标
-- `description` (TEXT): 网页描述
-- `tags` (TEXT): 标签（逗号分隔）
-- `sort` (INTEGER): 排序值
-- `create_time` (DATETIME): 创建时间
-- `update_time` (DATETIME): 更新时间
+| 字段名 | 数据类型 | 描述 |
+|--------|---------|------|
+| `bookmark_id` | INTEGER | 收藏 ID |
+| `cate_id` | INTEGER | 关联分类 |
+| `user_id` | TEXT | 关联用户 |
+| `title` | TEXT | 网页标题 |
+| `url` | TEXT | 网页地址 |
+| `icon` | TEXT | 网页图标 |
+| `description` | TEXT | 网页描述 |
+| `tags` | TEXT | 标签（逗号分隔） |
+| `sort` | INTEGER | 排序值 |
+| `create_time` | DATETIME | 创建时间 |
+| `update_time` | DATETIME | 更新时间 |
 
-## API 使用方法
+## 🔌 API 文档
 
 ### 认证机制
 - 所有需要认证的API都需要在请求头中添加 `Authorization: Bearer <token>`
@@ -245,115 +271,30 @@ npm run dev
   }
   ```
 
-#### 1.3 获取用户信息
-- **URL**: `/api/users`
-- **方法**: `GET`
-- **请求头**: `Authorization: Bearer <token>`
-- **响应**:
-  ```json
-  {
-    "user_id": "用户ID",
-    "username": "用户名",
-    "avatar": "头像URL",
-    "dark_mode": 0,
-    "create_time": "2024-01-01T00:00:00Z",
-    "update_time": "2024-01-01T00:00:00Z"
-  }
-  ```
-
-#### 1.4 更新用户设置
-- **URL**: `/api/users`
-- **方法**: `PUT`
-- **请求头**: `Authorization: Bearer <token>`
-- **请求体**:
-  ```json
-  {
-    "dark_mode": 1
-  }
-  ```
-- **响应**:
-  ```json
-  {
-    "success": true
-  }
-  ```
-
 ### 2. 分类相关 API
 
 #### 2.1 获取分类列表
 - **URL**: `/api/categories`
 - **方法**: `GET`
 - **请求头**: `Authorization: Bearer <token>`
-- **响应**:
-  ```json
-  [
-    {
-      "cate_id": 1,
-      "user_id": "用户ID",
-      "cate_name": "分类名称",
-      "cate_desc": "分类描述",
-      "cate_cover": "分类封面",
-      "sort": 1,
-      "is_public": 0,
-      "create_time": "2024-01-01T00:00:00Z",
-      "update_time": "2024-01-01T00:00:00Z"
-    }
-  ]
-  ```
+- **响应**: 分类列表数组
 
 #### 2.2 创建分类
 - **URL**: `/api/categories`
 - **方法**: `POST`
 - **请求头**: `Authorization: Bearer <token>`
-- **请求体**:
-  ```json
-  {
-    "cate_name": "分类名称",
-    "cate_desc": "分类描述",
-    "cate_cover": "分类封面",
-    "is_public": 0
-  }
-  ```
-- **响应**:
-  ```json
-  {
-    "success": true,
-    "id": 1
-  }
-  ```
+- **请求体**: 分类信息对象
 
 #### 2.3 更新分类
 - **URL**: `/api/categories`
 - **方法**: `PUT`
 - **请求头**: `Authorization: Bearer <token>`
-- **请求体**:
-  ```json
-  {
-    "cate_id": 1,
-    "cate_name": "分类名称",
-    "cate_desc": "分类描述",
-    "cate_cover": "分类封面",
-    "sort": 1,
-    "is_public": 0
-  }
-  ```
-- **响应**:
-  ```json
-  {
-    "success": true
-  }
-  ```
+- **请求体**: 分类信息对象
 
 #### 2.4 删除分类
 - **URL**: `/api/categories?id=1`
 - **方法**: `DELETE`
 - **请求头**: `Authorization: Bearer <token>`
-- **响应**:
-  ```json
-  {
-    "success": true
-  }
-  ```
 
 ### 3. 书签相关 API
 
@@ -362,130 +303,35 @@ npm run dev
 - **方法**: `GET`
 - **请求头**: `Authorization: Bearer <token>`
 - **参数**: `cate_id` (可选，指定分类ID)
-- **响应**:
-  ```json
-  [
-    {
-      "bookmark_id": 1,
-      "cate_id": 1,
-      "user_id": "用户ID",
-      "title": "网页标题",
-      "url": "网页地址",
-      "icon": "网页图标",
-      "description": "网页描述",
-      "tags": "标签1,标签2",
-      "sort": 1,
-      "create_time": "2024-01-01T00:00:00Z",
-      "update_time": "2024-01-01T00:00:00Z"
-    }
-  ]
-  ```
 
 #### 3.2 创建书签
 - **URL**: `/api/bookmarks`
 - **方法**: `POST`
 - **请求头**: `Authorization: Bearer <token>`
-- **请求体**:
-  ```json
-  {
-    "cate_id": 1,
-    "title": "网页标题",
-    "url": "网页地址",
-    "icon": "网页图标",
-    "description": "网页描述",
-    "tags": "标签1,标签2"
-  }
-  ```
-- **响应**:
-  ```json
-  {
-    "success": true,
-    "id": 1
-  }
-  ```
+- **请求体**: 书签信息对象
 
 #### 3.3 更新书签
 - **URL**: `/api/bookmarks`
 - **方法**: `PUT`
 - **请求头**: `Authorization: Bearer <token>`
-- **请求体**:
-  ```json
-  {
-    "bookmark_id": 1,
-    "title": "网页标题",
-    "url": "网页地址",
-    "icon": "网页图标",
-    "description": "网页描述",
-    "tags": "标签1,标签2"
-  }
-  ```
-- **响应**:
-  ```json
-  {
-    "success": true
-  }
-  ```
+- **请求体**: 书签信息对象
 
 #### 3.4 删除书签
 - **URL**: `/api/bookmarks?id=1`
 - **方法**: `DELETE`
 - **请求头**: `Authorization: Bearer <token>`
-- **响应**:
-  ```json
-  {
-    "success": true
-  }
-  ```
 
 #### 3.5 导入书签
 - **URL**: `/api/bookmarks/import`
 - **方法**: `POST`
 - **请求头**: `Authorization: Bearer <token>`
-- **请求体**:
-  ```json
-  {
-    "bookmarks": [
-      {
-        "title": "网页标题",
-        "url": "网页地址",
-        "category": "分类名称",
-        "description": "网页描述",
-        "tags": "标签1,标签2"
-      }
-    ]
-  }
-  ```
-- **响应**:
-  ```json
-  {
-    "success": true,
-    "imported": 1
-  }
-  ```
+- **请求体**: 书签数组
 
 #### 3.6 搜索书签
 - **URL**: `/api/bookmarks/search?q=关键词`
 - **方法**: `GET`
 - **请求头**: `Authorization: Bearer <token>`
 - **参数**: `q` (搜索关键词)
-- **响应**:
-  ```json
-  [
-    {
-      "bookmark_id": 1,
-      "cate_id": 1,
-      "user_id": "用户ID",
-      "title": "网页标题",
-      "url": "网页地址",
-      "icon": "网页图标",
-      "description": "网页描述",
-      "tags": "标签1,标签2",
-      "sort": 1,
-      "create_time": "2024-01-01T00:00:00Z",
-      "update_time": "2024-01-01T00:00:00Z"
-    }
-  ]
-  ```
 
 ### 4. URL 信息抓取 API
 
@@ -498,16 +344,9 @@ npm run dev
     "url": "https://example.com"
   }
   ```
-- **响应**:
-  ```json
-  {
-    "title": "网页标题",
-    "description": "网页描述",
-    "icon": "网页图标"
-  }
-  ```
+- **响应**: 包含标题、描述、图标的对象
 
-## 后续维护
+## 🔧 后续维护
 
 ### 1. 数据备份
 - Cloudflare D1 支持定时备份
@@ -523,7 +362,7 @@ npm run dev
 - 可集成更多第三方服务
 - 支持添加更多自定义配置选项
 
-## 故障排查
+## 🚨 故障排查
 
 ### 1. 登录问题
 - 检查用户名和密码是否正确
@@ -537,6 +376,17 @@ npm run dev
 - 检查构建日志，确认是否有构建错误
 - 确认 Pages Functions 配置是否正确
 
-## 许可证
+## 📄 许可证
 
-MIT
+本项目采用 MIT 许可证 - 详情请参阅 [LICENSE](LICENSE) 文件
+
+## 🙏 致谢
+
+- 感谢 Vue.js 团队提供优秀的前端框架
+- 感谢 Tailwind CSS 团队提供美观的样式系统
+- 感谢 Cloudflare 提供强大的云服务
+- 感谢所有为开源做出贡献的开发者
+
+---
+
+**享受收藏管理的乐趣！** 🎉

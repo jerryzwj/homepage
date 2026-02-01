@@ -280,6 +280,7 @@
       :is-editing="isEditingBookmark"
       :bookmark="currentBookmark"
       :categories="bookmarkStore.categories"
+      :existing-bookmarks="bookmarkStore.bookmarks"
       @close="closeBookmarkModal"
       @save="saveBookmark"
     />
@@ -975,12 +976,6 @@ const handleExport = async () => {
   } catch (error) {
     exportError.value = '导出失败: ' + error.message
   }
-}
-
-// 跳转到书签链接
-const goToBookmark = (url) => {
-  console.log('跳转到:', url)
-  window.open(url, '_blank', 'noopener,noreferrer')
 }
 
 

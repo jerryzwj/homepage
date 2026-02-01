@@ -128,6 +128,10 @@ const props = defineProps({
   categories: {
     type: Array,
     default: () => []
+  },
+  existingBookmarks: {
+    type: Array,
+    default: () => []
   }
 })
 
@@ -181,6 +185,20 @@ const close = () => {
 }
 
 const save = async () => {
+  // 检查是否存在重复的书签URL
+  const isDuplicate = props.existingBookmarks.some(bookmark => {
+    // 编辑模式下排除当前正在编辑的书签
+    if (props.isEditing && bookmark.bookmark_id === form.bookmark_id) {
+      return false
+    }
+    return bookmark.url === form.url
+  })
+
+  if (isDuplicate) {
+    alert('该网址已存在于收藏中，请检查后重新输入！')
+    return
+  }
+
   isLoading.value = true
   try {
     // 处理标签，支持空格和中文逗号作为分隔符
