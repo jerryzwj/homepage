@@ -85,7 +85,7 @@
               <div class="flex items-center gap-2">
                 <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
                   {{ bookmarkStore.currentCategory ? 
-                      bookmarkStore.categories.find(c => c.cate_id === bookmarkStore.currentCategory)?.cate_name : 
+                      (bookmarkStore.categories || []).find(c => c.cate_id === bookmarkStore.currentCategory)?.cate_name || '所有收藏' : 
                       '所有收藏' 
                   }}
                 </h2>
