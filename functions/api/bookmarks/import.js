@@ -75,7 +75,7 @@ export async function onRequestPost(context) {
       // 检查是否已存在相同URL的书签
       const existingBookmark = await db.prepare(
         'SELECT bookmark_id FROM bookmarks WHERE user_id = ? AND url = ?'
-      ).bind(userId, url).all();
+      ).bind(userId, url || '').all();
       
       if (existingBookmark.results.length > 0) {
         continue; // 跳过重复书签
