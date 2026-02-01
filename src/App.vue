@@ -170,7 +170,7 @@
                         <div class="w-6 h-6 rounded-full flex items-center justify-center bg-blue-200 dark:bg-purple-800 text-blue-700 dark:text-purple-200 text-xs font-medium">
                           {{ bookmark.title.charAt(0).toUpperCase() }}
                         </div>
-                        <h3 class="font-bold text-gray-900 dark:text-white truncate whitespace-nowrap overflow-hidden" v-html="highlightKeywords(bookmark.title, searchQuery)"></h3>
+                        <h3 class="font-bold text-sm text-gray-900 dark:text-white truncate whitespace-nowrap overflow-hidden" v-html="highlightKeywords(bookmark.title, searchQuery)"></h3>
                       </div>
                       <div v-if="userStore.isLoggedIn" class="flex items-center gap-1">
                         <button 
@@ -206,7 +206,7 @@
                         <div class="w-6 h-6 rounded-full flex items-center justify-center bg-blue-200 dark:bg-purple-800 text-blue-700 dark:text-purple-200 text-xs font-medium">
                           {{ bookmark.title.charAt(0).toUpperCase() }}
                         </div>
-                        <h3 class="font-bold text-gray-900 dark:text-white truncate whitespace-nowrap overflow-hidden" v-html="highlightKeywords(bookmark.title, searchQuery)"></h3>
+                        <h3 class="font-bold text-sm text-gray-900 dark:text-white truncate whitespace-nowrap overflow-hidden" v-html="highlightKeywords(bookmark.title, searchQuery)"></h3>
                       </div>
                       <div v-if="userStore.isLoggedIn" class="flex items-center gap-1">
                         <button 
@@ -236,7 +236,7 @@
                     <div class="w-6 h-6 rounded-full flex items-center justify-center bg-blue-200 dark:bg-purple-800 text-blue-700 dark:text-purple-200 text-xs font-medium">
                       {{ bookmark.title.charAt(0).toUpperCase() }}
                     </div>
-                    <h3 class="font-bold text-gray-900 dark:text-white truncate whitespace-nowrap overflow-hidden" v-html="highlightKeywords(bookmark.title, searchQuery)"></h3>
+                    <h3 class="font-bold text-sm text-gray-900 dark:text-white truncate whitespace-nowrap overflow-hidden" v-html="highlightKeywords(bookmark.title, searchQuery)"></h3>
                   </div>
                   <div v-if="userStore.isLoggedIn" class="flex items-center gap-1">
                     <button 
