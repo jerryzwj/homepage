@@ -32,12 +32,9 @@ export const useBookmarkStore = defineStore('bookmark', {
         
         if (response.ok) {
           this.categories = await response.json()
-        } else {
-          this.categories = []
         }
       } catch (error) {
         console.error('获取分类失败:', error)
-        this.categories = []
       } finally {
         this.isLoading = false
       }
@@ -63,14 +60,9 @@ export const useBookmarkStore = defineStore('bookmark', {
         if (response.ok) {
           this.bookmarks = await response.json()
           this.currentCategory = cateId
-        } else {
-          this.bookmarks = []
-          this.currentCategory = cateId
         }
       } catch (error) {
         console.error('获取收藏失败:', error)
-        this.bookmarks = []
-        this.currentCategory = cateId
       } finally {
         this.isLoading = false
       }

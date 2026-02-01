@@ -40,7 +40,7 @@
               </div>
               <!-- 分类列表 -->
               <div 
-                v-for="category in (bookmarkStore.categories || [])" 
+                v-for="category in bookmarkStore.categories" 
                 :key="category.cate_id" 
                 class="flex items-center justify-between p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
                 @click="switchCategory(category.cate_id)"
@@ -82,21 +82,12 @@
         <div class="md:col-span-3">
           <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-6">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
-              <div class="flex items-center gap-2">
-                <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
-                  {{ bookmarkStore.currentCategory ? 
-                      (bookmarkStore.categories || []).find(c => c.cate_id === bookmarkStore.currentCategory)?.cate_name || '所有收藏' : 
-                      '所有收藏' 
-                  }}
-                </h2>
-                <button 
-                  v-if="userStore.isLoggedIn && bookmarkStore.bookmarks && bookmarkStore.bookmarks.length > 0" 
-                  class="px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                  @click="toggleSelectAll"
-                >
-                  {{ selectedBookmarks.value.length === (bookmarkStore.bookmarks?.length || 0) ? '取消全选' : '全选' }}
-                </button>
-              </div>
+              <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
+                {{ bookmarkStore.currentCategory ? 
+                    bookmarkStore.categories.find(c => c.cate_id === bookmarkStore.currentCategory)?.cate_name : 
+                    '所有收藏' 
+                }}
+              </h2>
               <div class="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
                 <div class="relative flex-grow">
                   <input 
@@ -128,34 +119,13 @@
                   >
                     导入收藏
                   </button>
-                  <button 
-                    v-if="userStore.isLoggedIn" 
-                    class="flex-1 sm:flex-none px-3 py-2 bg-orange-600 text-white rounded-md text-sm hover:bg-orange-700 transition-colors"
-                    @click="exportBookmarks"
-                  >
-                    导出收藏
-                  </button>
-                  <button 
-                    v-if="userStore.isLoggedIn && selectedBookmarks.value.length > 0" 
-                    class="flex-1 sm:flex-none px-3 py-2 bg-red-600 text-white rounded-md text-sm hover:bg-red-700 transition-colors"
-                    @click="deleteSelectedBookmarks"
-                  >
-                    删除所选 ({{ selectedBookmarks.value.length }})
-                  </button>
                 </div>
               </div>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" ref="bookmarksContainer">
-              <div v-for="bookmark in (bookmarkStore.bookmarks || [])" :key="bookmark.bookmark_id" class="bg-white dark:bg-gray-600 rounded-lg p-4 hover:shadow-md transition-shadow border border-gray-200 dark:border-gray-500">
+              <div v-for="bookmark in bookmarkStore.bookmarks" :key="bookmark.bookmark_id" class="bg-white dark:bg-gray-600 rounded-lg p-4 hover:shadow-md transition-shadow border border-gray-200 dark:border-gray-500">
                 <div class="flex items-start justify-between mb-2">
                   <div class="flex items-center gap-2">
-                    <input 
-                      v-if="userStore.isLoggedIn" 
-                      type="checkbox" 
-                      :checked="selectedBookmarks.value.includes(bookmark.bookmark_id)"
-                      @change="toggleBookmarkSelection(bookmark.bookmark_id)"
-                      class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-700 border-gray-300 dark:border-gray-600"
-                    >
                     <img v-if="bookmark.icon" :src="bookmark.icon" alt="Favicon" class="w-6 h-6 rounded">
                     <h3 class="font-medium text-gray-900 dark:text-white" v-html="highlightKeywords(bookmark.title, searchQuery)"></h3>
                   </div>
@@ -176,14 +146,14 @@
                 </div>
                 <p class="text-sm text-gray-600 dark:text-gray-400 mb-3" v-html="highlightKeywords(bookmark.description, searchQuery)"></p>
                 <a :href="bookmark.url" target="_blank" rel="noopener noreferrer" class="text-sm text-blue-600 dark:text-blue-400 truncate block mb-2" v-html="highlightKeywords(bookmark.url, searchQuery)"></a>
-                <div class="flex flex-wrap gap-1" v-if="bookmark.tags && bookmark.tags.trim()">
-                  <span v-for="tag in bookmark.tags.split(',')" :key="tag" v-if="tag && tag.trim()" class="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded">
+                <div class="flex flex-wrap gap-1">
+                  <span v-for="tag in bookmark.tags.split(',')" :key="tag" class="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded">
                     {{ tag }}
                   </span>
                 </div>
               </div>
             </div>
-            <div v-if="!bookmarkStore.bookmarks || bookmarkStore.bookmarks.length === 0" class="text-center py-12 text-gray-500 dark:text-gray-400">
+            <div v-if="bookmarkStore.bookmarks.length === 0" class="text-center py-12 text-gray-500 dark:text-gray-400">
               <p v-if="userStore.isLoggedIn">暂无收藏，点击「添加收藏」开始</p>
               <p v-else>登录后查看和管理收藏</p>
             </div>
@@ -317,9 +287,6 @@ const importFile = ref(null)
 const importLoading = ref(false)
 const importError = ref('')
 
-// 多选删除状态
-const selectedBookmarks = ref([])
-
 onMounted(async () => {
   // 初始化用户状态
   userStore.init()
@@ -330,33 +297,29 @@ onMounted(async () => {
   }
   
   // 初始化收藏卡片拖拽排序
-  if (bookmarksContainer.value && bookmarkStore.bookmarks) {
+  if (bookmarksContainer.value) {
     new Sortable(bookmarksContainer.value, {
       animation: 150,
       ghostClass: 'bg-gray-200 dark:bg-gray-600',
       onEnd: function(evt) {
-        if (bookmarkStore.bookmarks) {
-          const movedBookmark = bookmarkStore.bookmarks.splice(evt.oldIndex, 1)[0]
-          bookmarkStore.bookmarks.splice(evt.newIndex, 0, movedBookmark)
-          // 更新排序到服务器
-          bookmarkStore.updateBookmarkOrder(bookmarkStore.bookmarks)
-        }
+        const movedBookmark = bookmarkStore.bookmarks.splice(evt.oldIndex, 1)[0]
+        bookmarkStore.bookmarks.splice(evt.newIndex, 0, movedBookmark)
+        // 更新排序到服务器
+        bookmarkStore.updateBookmarkOrder(bookmarkStore.bookmarks)
       }
     })
   }
   
   // 初始化分类拖拽排序
-  if (categoriesContainer.value && bookmarkStore.categories) {
+  if (categoriesContainer.value) {
     new Sortable(categoriesContainer.value, {
       animation: 150,
       ghostClass: 'bg-gray-200 dark:bg-gray-600',
       onEnd: function(evt) {
-        if (bookmarkStore.categories) {
-          const movedCategory = bookmarkStore.categories.splice(evt.oldIndex, 1)[0]
-          bookmarkStore.categories.splice(evt.newIndex, 0, movedCategory)
-          // 更新排序到服务器
-          bookmarkStore.updateCategoryOrder(bookmarkStore.categories)
-        }
+        const movedCategory = bookmarkStore.categories.splice(evt.oldIndex, 1)[0]
+        bookmarkStore.categories.splice(evt.newIndex, 0, movedCategory)
+        // 更新排序到服务器
+        bookmarkStore.updateCategoryOrder(bookmarkStore.categories)
       }
     })
   }
@@ -378,11 +341,6 @@ watch(() => userStore.isLoggedIn, (isLoggedIn) => {
 const loadData = async () => {
   await bookmarkStore.fetchCategories()
   await bookmarkStore.fetchBookmarks()
-  
-  // 检查是否有分类，如果没有，显示提示信息
-  if (!bookmarkStore.categories || bookmarkStore.categories.length === 0) {
-    console.log('用户暂无分类，将显示默认提示')
-  }
 }
 
 // 切换分类
@@ -690,111 +648,6 @@ const handleImport = async () => {
   } catch (error) {
     importError.value = '导入失败: ' + error.message
     importLoading.value = false
-  }
-}
-
-// 导出收藏
-const exportBookmarks = async () => {
-  try {
-    // 确保我们有最新的书签数据
-    await bookmarkStore.fetchBookmarks()
-    await bookmarkStore.fetchCategories()
-    
-    // 按分类组织书签
-    const bookmarksByCategory = {}
-    (bookmarkStore.bookmarks || []).forEach(bookmark => {
-      const categoryName = (bookmarkStore.categories || []).find(c => c.cate_id === bookmark.cate_id)?.cate_name || '未分类'
-      if (!bookmarksByCategory[categoryName]) {
-        bookmarksByCategory[categoryName] = []
-      }
-      bookmarksByCategory[categoryName].push(bookmark)
-    })
-    
-    // 生成Edge浏览器格式的HTML
-    let html = `<!DOCTYPE NETSCAPE-Bookmark-file-1>
-<!-- This is an automatically generated file.
-     It will be read and overwritten.
-     DO NOT EDIT! -->
-<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-<TITLE>Bookmarks</TITLE>
-<H1>Bookmarks</H1>
-<DL><p>
-`
-    
-    // 添加每个分类及其书签
-    Object.entries(bookmarksByCategory).forEach(([categoryName, bookmarks]) => {
-      html += `<DT><H3>${categoryName}</H3>
-<DL><p>
-`
-      
-      bookmarks.forEach(bookmark => {
-        html += `<DT><A HREF="${bookmark.url}" ADD_DATE="${Math.floor(new Date(bookmark.create_time).getTime() / 1000)}" LAST_MODIFIED="${Math.floor(new Date(bookmark.update_time).getTime() / 1000)}"${bookmark.description ? ` TITLE="${bookmark.description}"` : ''}>${bookmark.title}</A>
-`
-      })
-      
-      html += `</DL><p>
-`
-    })
-    
-    html += `</DL><p>`
-    
-    // 创建Blob并下载
-    const blob = new Blob([html], { type: 'text/html;charset=utf-8' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `bookmarks_${new Date().toISOString().split('T')[0]}.html`
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
-  } catch (error) {
-    console.error('导出失败:', error)
-    alert('导出失败，请重试')
-  }
-}
-
-// 切换书签选择状态
-const toggleBookmarkSelection = (bookmarkId) => {
-  const index = selectedBookmarks.value.indexOf(bookmarkId)
-  if (index > -1) {
-    selectedBookmarks.value.splice(index, 1)
-  } else {
-    selectedBookmarks.value.push(bookmarkId)
-  }
-}
-
-// 切换全选状态
-const toggleSelectAll = () => {
-  if (!bookmarkStore.bookmarks) {
-    selectedBookmarks.value = []
-    return
-  }
-  
-  if (selectedBookmarks.value.length === (bookmarkStore.bookmarks?.length || 0)) {
-    // 取消全选
-    selectedBookmarks.value = []
-  } else {
-    // 全选
-    selectedBookmarks.value = (bookmarkStore.bookmarks || []).map(bookmark => bookmark.bookmark_id)
-  }
-}
-
-// 删除选中的书签
-const deleteSelectedBookmarks = async () => {
-  if (selectedBookmarks.value.length === 0) return
-  
-  if (confirm(`确定要删除选中的 ${selectedBookmarks.value.length} 个收藏吗？`)) {
-    try {
-      for (const bookmarkId of selectedBookmarks.value) {
-        await bookmarkStore.deleteBookmark(bookmarkId)
-      }
-      // 清空选择
-      selectedBookmarks.value = []
-    } catch (error) {
-      console.error('删除失败:', error)
-      alert('删除失败，请重试')
-    }
   }
 }
 

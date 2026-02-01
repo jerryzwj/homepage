@@ -95,13 +95,14 @@ export async function onRequestPost(context) {
         const sort = (maxSortResult.results[0]?.max_sort || 0) + 1;
         
         const newCategoryResult = await db.prepare(
-          'INSERT INTO categories (user_id, cate_name, cate_desc, cate_cover, sort, create_time, update_time) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)'
+          'INSERT INTO categories (user_id, cate_name, cate_desc, cate_cover, sort, is_public, create_time, update_time) VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)'
         ).bind(
           userId, 
           safeCategoryName, 
           '', 
           '', 
-          sort
+          sort, 
+          0
         ).run();
         
         cateId = newCategoryResult.meta.lastInsertRowid;

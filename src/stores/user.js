@@ -136,8 +136,6 @@ export const useUserStore = defineStore('user', {
         this.username = userData.username
         this.avatar = userData.avatar
         this.isLoggedIn = true
-        // 验证token有效性
-        this.login()
       } else {
         this.isLoggedIn = false
         this.userId = null
