@@ -330,29 +330,33 @@ onMounted(async () => {
   }
   
   // 初始化收藏卡片拖拽排序
-  if (bookmarksContainer.value) {
+  if (bookmarksContainer.value && bookmarkStore.bookmarks) {
     new Sortable(bookmarksContainer.value, {
       animation: 150,
       ghostClass: 'bg-gray-200 dark:bg-gray-600',
       onEnd: function(evt) {
-        const movedBookmark = bookmarkStore.bookmarks.splice(evt.oldIndex, 1)[0]
-        bookmarkStore.bookmarks.splice(evt.newIndex, 0, movedBookmark)
-        // 更新排序到服务器
-        bookmarkStore.updateBookmarkOrder(bookmarkStore.bookmarks)
+        if (bookmarkStore.bookmarks) {
+          const movedBookmark = bookmarkStore.bookmarks.splice(evt.oldIndex, 1)[0]
+          bookmarkStore.bookmarks.splice(evt.newIndex, 0, movedBookmark)
+          // 更新排序到服务器
+          bookmarkStore.updateBookmarkOrder(bookmarkStore.bookmarks)
+        }
       }
     })
   }
   
   // 初始化分类拖拽排序
-  if (categoriesContainer.value) {
+  if (categoriesContainer.value && bookmarkStore.categories) {
     new Sortable(categoriesContainer.value, {
       animation: 150,
       ghostClass: 'bg-gray-200 dark:bg-gray-600',
       onEnd: function(evt) {
-        const movedCategory = bookmarkStore.categories.splice(evt.oldIndex, 1)[0]
-        bookmarkStore.categories.splice(evt.newIndex, 0, movedCategory)
-        // 更新排序到服务器
-        bookmarkStore.updateCategoryOrder(bookmarkStore.categories)
+        if (bookmarkStore.categories) {
+          const movedCategory = bookmarkStore.categories.splice(evt.oldIndex, 1)[0]
+          bookmarkStore.categories.splice(evt.newIndex, 0, movedCategory)
+          // 更新排序到服务器
+          bookmarkStore.updateCategoryOrder(bookmarkStore.categories)
+        }
       }
     })
   }
