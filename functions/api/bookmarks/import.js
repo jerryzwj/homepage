@@ -122,8 +122,8 @@ export async function onRequestPost(context) {
       ).bind(
         cateId, 
         userId, 
-        title, 
-        url, 
+        title || '', 
+        url || '', 
         '', // 自动抓取图标可以在后续实现
         description || '', 
         tags || '', 

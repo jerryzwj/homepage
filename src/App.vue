@@ -76,6 +76,22 @@
               </div>
             </div>
           </div>
+          
+          <!-- 标签容器 -->
+          <div class="bg-gray-50 dark:bg-gray-800 rounded-lg shadow-sm p-4 mt-4">
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">标签管理</h2>
+            <div class="flex flex-wrap gap-2">
+              <span 
+                v-for="tag in allTags" 
+                :key="tag"
+                class="px-3 py-1 rounded-full text-sm cursor-pointer transition-colors"
+                :class="getTagColorClass(tag)"
+                @click="filterByTag(tag)"
+              >
+                {{ tag }}
+              </span>
+            </div>
+          </div>
         </div>
         
         <!-- 收藏卡片区域 -->
@@ -324,6 +340,25 @@ const isRegisterMode = ref(false)
 // 搜索状态
 const searchQuery = ref('')
 
+// 标签相关状态
+const selectedTag = ref(null)
+
+// 计算所有标签
+const allTags = computed(() => {
+  const tagsSet = new Set()
+  bookmarkStore.bookmarks.forEach(bookmark => {
+    if (bookmark.tags) {
+      bookmark.tags.split(',').forEach(tag => {
+        const trimmedTag = tag.trim()
+        if (trimmedTag) {
+          tagsSet.add(trimmedTag)
+        }
+      })
+    }
+  })
+  return Array.from(tagsSet)
+})
+
 // 导入模态框状态
 const isImportModalOpen = ref(false)
 const importFile = ref(null)
@@ -546,7 +581,10 @@ const handleLoginSuccess = async (user) => {
 // 处理搜索
 const handleSearch = async () => {
   if (searchQuery.value) {
-    await bookmarkStore.searchBookmarks(searchQuery.value)
+    const success = await bookmarkStore.searchBookmarks(searchQuery.value)
+    if (!success) {
+      console.error('搜索失败')
+    }
   } else {
     await bookmarkStore.fetchBookmarks(bookmarkStore.currentCategory)
   }
@@ -555,7 +593,61 @@ const handleSearch = async () => {
 // 清除搜索
 const clearSearch = async () => {
   searchQuery.value = ''
+  selectedTag.value = null
   await bookmarkStore.fetchBookmarks(bookmarkStore.currentCategory)
+}
+
+// 清除标签筛选
+const clearTagFilter = async () => {
+  selectedTag.value = null
+  await bookmarkStore.fetchBookmarks(bookmarkStore.currentCategory)
+}
+
+// 为标签生成不同的背景颜色
+const getTagColorClass = (tag) => {
+  // 基于标签名的哈希值生成颜色索引
+  const colors = [
+    'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200',
+    'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200',
+    'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200',
+    'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200',
+    'bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200',
+    'bg-pink-100 dark:bg-pink-900 text-pink-800 dark:text-pink-200',
+    'bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200',
+    'bg-teal-100 dark:bg-teal-900 text-teal-800 dark:text-teal-200'
+  ]
+  
+  let hash = 0
+  for (let i = 0; i < tag.length; i++) {
+    hash = tag.charCodeAt(i) + ((hash << 5) - hash)
+  }
+  const colorIndex = Math.abs(hash) % colors.length
+  
+  // 如果是选中的标签，添加选中样式
+  if (selectedTag.value === tag) {
+    return colors[colorIndex] + ' ring-2 ring-offset-2 ring-blue-500 dark:ring-blue-400'
+  }
+  
+  return colors[colorIndex]
+}
+
+// 按标签筛选
+const filterByTag = async (tag) => {
+  selectedTag.value = selectedTag.value === tag ? null : tag
+  
+  if (selectedTag.value) {
+    // 筛选包含该标签的书签
+    const filteredBookmarks = bookmarkStore.bookmarks.filter(bookmark => {
+      if (!bookmark.tags) return false
+      return bookmark.tags.split(',').some(t => t.trim() === tag)
+    })
+    
+    // 直接更新bookmarkStore中的bookmarks
+    bookmarkStore.bookmarks = filteredBookmarks
+  } else {
+    // 清除筛选，重新获取数据
+    await bookmarkStore.fetchBookmarks(bookmarkStore.currentCategory)
+  }
 }
 
 // 高亮关键词
