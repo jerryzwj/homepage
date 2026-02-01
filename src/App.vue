@@ -26,7 +26,7 @@
       <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
         <!-- 分类侧边栏 -->
         <div class="md:col-span-1">
-          <div class="bg-white dark:bg-gray-700 rounded-lg shadow-sm p-4">
+          <div class="bg-gray-50 dark:bg-gray-800 rounded-lg shadow-sm p-4">
             <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">分类管理</h2>
             <div class="space-y-2" ref="categoriesContainer">
               <!-- 全部选项 -->
@@ -80,7 +80,7 @@
         
         <!-- 收藏卡片区域 -->
         <div class="md:col-span-3">
-          <div class="bg-white dark:bg-gray-700 rounded-lg shadow-sm p-4 mb-6">
+          <div class="bg-gray-50 dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-6">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
               <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
                 {{ bookmarkStore.currentCategory ? 
