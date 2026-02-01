@@ -1,10 +1,10 @@
 <template>
   <div class="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
-    <header class="bg-blue-50 dark:bg-purple-900/30 shadow-sm border-b border-blue-100 dark:border-purple-700">
+    <header class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
       <div class="container mx-auto px-4 py-4 flex justify-between items-center">
         <h1 class="text-2xl font-bold text-gray-900 dark:text-white">收藏夹 Homepage</h1>
         <div class="flex items-center gap-4">
-          <button @click="userStore.toggleDarkMode" class="p-2 rounded-full hover:bg-blue-100 dark:hover:bg-purple-800">
+          <button @click="userStore.toggleDarkMode" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
             <svg v-if="!userStore.darkMode" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-600 dark:text-gray-300"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
             <svg v-else xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-300 dark:text-gray-600"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
           </button>
@@ -26,12 +26,12 @@
       <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
         <!-- 分类侧边栏 -->
         <div class="md:col-span-1">
-          <div class="bg-blue-50 dark:bg-purple-900/30 rounded-lg shadow-sm p-4 border border-blue-100 dark:border-purple-700">
+          <div class="bg-gray-50 dark:bg-gray-800 rounded-lg shadow-sm p-4 border border-gray-200 dark:border-gray-700">
             <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">分类管理</h2>
             <div class="space-y-2" ref="categoriesContainer">
               <!-- 全部选项 -->
               <div 
-                class="flex items-center justify-between p-2 rounded bg-blue-50 dark:bg-purple-900/30 hover:bg-blue-100 dark:hover:bg-purple-800 cursor-pointer border border-blue-100 dark:border-purple-700"
+                class="flex items-center justify-between p-2 rounded bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer border border-gray-200 dark:border-gray-600"
                 @click="switchCategory(null)"
               >
                 <div class="flex items-center gap-2">
@@ -42,7 +42,7 @@
               <div 
                 v-for="category in bookmarkStore.categories" 
                 :key="category.cate_id" 
-                class="flex items-center justify-between p-2 rounded bg-blue-50 dark:bg-purple-900/30 hover:bg-blue-100 dark:hover:bg-purple-800 cursor-pointer border border-blue-100 dark:border-purple-700"
+                class="flex items-center justify-between p-2 rounded bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer border border-gray-200 dark:border-gray-600"
                 @click="switchCategory(category.cate_id)"
               >
                 <div class="flex items-center gap-2">
@@ -50,13 +50,13 @@
                 </div>
                 <div class="flex items-center gap-2">
                   <button 
-                    class="p-1 hover:bg-blue-100 dark:hover:bg-purple-700 rounded"
+                    class="p-1 hover:bg-gray-100 dark:hover:bg-gray-600 rounded"
                     @click.stop="openEditCategoryModal(category)"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500 dark:text-gray-400"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
                   </button>
                   <button 
-                    class="p-1 hover:bg-blue-100 dark:hover:bg-purple-700 rounded"
+                    class="p-1 hover:bg-gray-100 dark:hover:bg-gray-600 rounded"
                     @click.stop="deleteCategory(category.cate_id)"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-500"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -96,7 +96,7 @@
         
         <!-- 收藏卡片区域 -->
         <div class="md:col-span-3">
-          <div class="bg-blue-50 dark:bg-purple-900/30 rounded-lg shadow-sm p-4 mb-6 border border-blue-100 dark:border-purple-700">
+          <div class="bg-gray-50 dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-6 border border-gray-200 dark:border-gray-700">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
               <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
                 {{ bookmarkStore.currentCategory ? 
@@ -155,23 +155,23 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4" ref="bookmarksContainer">
               <div v-for="bookmark in bookmarkStore.bookmarks" :key="bookmark.bookmark_id" class="bg-blue-50 dark:bg-purple-900/30 rounded-lg p-3 hover:shadow-md transition-shadow border border-blue-100 dark:border-purple-700">
                 <div class="flex items-start justify-between mb-2">
-                  <div class="flex items-center gap-2 flex-1">
+                  <div class="flex items-center gap-2 flex-1 min-w-0">
                     <div class="w-6 h-6 rounded flex items-center justify-center bg-blue-100 dark:bg-purple-800 text-blue-600 dark:text-purple-200 text-xs font-medium">
                       {{ bookmark.title.charAt(0).toUpperCase() }}
                     </div>
-                    <h3 class="font-medium text-gray-900 dark:text-white truncate" v-html="highlightKeywords(bookmark.title, searchQuery)"></h3>
+                    <h3 class="font-medium text-gray-900 dark:text-white truncate whitespace-nowrap overflow-hidden" v-html="highlightKeywords(bookmark.title, searchQuery)"></h3>
                   </div>
                   <div v-if="userStore.isLoggedIn" class="flex items-center gap-1">
                     <button 
-                      class="p-1 hover:bg-gray-200 dark:hover:bg-purple-700 rounded"
-                      @click.stop="openEditBookmarkModal(bookmark)"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500 dark:text-gray-400"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
-                    </button>
-                    <button 
-                      class="p-1 hover:bg-gray-200 dark:hover:bg-purple-700 rounded"
-                      @click.stop="deleteBookmark(bookmark.bookmark_id)"
-                    >
+                    class="p-1 hover:bg-blue-100 dark:hover:bg-purple-800 rounded"
+                    @click.stop="openEditBookmarkModal(bookmark)"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500 dark:text-gray-400"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+                  </button>
+                  <button 
+                    class="p-1 hover:bg-blue-100 dark:hover:bg-purple-800 rounded"
+                    @click.stop="deleteBookmark(bookmark.bookmark_id)"
+                  >
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-500"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                     </button>
                   </div>
