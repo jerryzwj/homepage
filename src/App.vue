@@ -167,7 +167,9 @@
                     </button>
                   </div>
                 </div>
-                <p class="text-sm text-gray-600 dark:text-gray-400 mb-3" style="display: -webkit-box; display: box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; box-orient: vertical; overflow: hidden;" v-html="highlightKeywords(bookmark.description, searchQuery)"></p>
+                <div class="text-sm text-gray-600 dark:text-gray-400 mb-3" style="max-height: 2.5rem; overflow: hidden; position: relative;">
+                  <p style="margin: 0;" v-html="highlightKeywords(bookmark.description, searchQuery)"></p>
+                </div>
                 <a :href="bookmark.url" target="_blank" rel="noopener noreferrer" class="text-sm text-blue-600 dark:text-blue-400 truncate block mb-2" v-html="highlightKeywords(bookmark.url, searchQuery)"></a>
                 <div v-if="bookmark.tags && bookmark.tags.split(',').filter(tag => tag.trim()).length > 0" class="flex flex-wrap gap-1">
                   <span v-for="tag in bookmark.tags.split(',').filter(tag => tag.trim())" :key="tag" class="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded">
