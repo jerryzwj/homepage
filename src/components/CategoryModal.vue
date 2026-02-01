@@ -30,7 +30,7 @@
               rows="2"
             ></textarea>
           </div>
-          <div class="mb-4">
+          <div class="mb-6">
             <label for="cate_cover" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">分类封面</label>
             <input 
               type="url" 
@@ -39,15 +39,6 @@
               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-700 dark:text-white"
               placeholder="请输入封面图片URL（可选）"
             >
-          </div>
-          <div class="mb-6 flex items-center">
-            <input 
-              type="checkbox" 
-              id="is_public" 
-              v-model="form.is_public" 
-              class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-700 border-gray-300 dark:border-gray-600"
-            >
-            <label for="is_public" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">设为公开</label>
           </div>
           <div class="flex justify-end gap-3">
             <button 
@@ -96,8 +87,7 @@ const form = reactive({
   cate_id: null,
   cate_name: '',
   cate_desc: '',
-  cate_cover: '',
-  is_public: 0
+  cate_cover: ''
 })
 
 const isLoading = ref(false)
@@ -109,7 +99,6 @@ watch(() => props.category, (newCategory) => {
     form.cate_name = newCategory.cate_name
     form.cate_desc = newCategory.cate_desc || ''
     form.cate_cover = newCategory.cate_cover || ''
-    form.is_public = newCategory.is_public || 0
   }
 }, { immediate: true })
 
@@ -125,7 +114,6 @@ const resetForm = () => {
   form.cate_name = ''
   form.cate_desc = ''
   form.cate_cover = ''
-  form.is_public = 0
 }
 
 const close = () => {

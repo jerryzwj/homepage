@@ -47,22 +47,8 @@
               >
                 <div class="flex items-center gap-2">
                   <span class="text-gray-700 dark:text-gray-300">{{ category.cate_name }}</span>
-                  <span v-if="category.is_public" class="text-xs px-2 py-0.5 bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200 rounded-full">
-                    公开
-                  </span>
-                  <span v-else class="text-xs px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-full">
-                    私有
-                  </span>
                 </div>
                 <div class="flex items-center gap-2">
-                  <button 
-                    class="p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded"
-                    @click.stop="toggleCategoryPublic(category)"
-                    title="切换公开/私有状态"
-                  >
-                    <svg v-if="category.is_public" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                    <svg v-else xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500 dark:text-gray-400"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-                  </button>
                   <button 
                     class="p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded"
                     @click.stop="openEditCategoryModal(category)"
@@ -96,12 +82,21 @@
         <div class="md:col-span-3">
           <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-6">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
-              <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
-                {{ bookmarkStore.currentCategory ? 
-                    bookmarkStore.categories.find(c => c.cate_id === bookmarkStore.currentCategory)?.cate_name : 
-                    '所有收藏' 
-                }}
-              </h2>
+              <div class="flex items-center gap-2">
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
+                  {{ bookmarkStore.currentCategory ? 
+                      bookmarkStore.categories.find(c => c.cate_id === bookmarkStore.currentCategory)?.cate_name : 
+                      '所有收藏' 
+                  }}
+                </h2>
+                <button 
+                  v-if="userStore.isLoggedIn && bookmarkStore.bookmarks.length > 0" 
+                  class="px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  @click="toggleSelectAll"
+                >
+                  {{ selectedBookmarks.value.length === bookmarkStore.bookmarks.length ? '取消全选' : '全选' }}
+                </button>
+              </div>
               <div class="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
                 <div class="relative flex-grow">
                   <input 
@@ -133,13 +128,34 @@
                   >
                     导入收藏
                   </button>
+                  <button 
+                    v-if="userStore.isLoggedIn" 
+                    class="flex-1 sm:flex-none px-3 py-2 bg-orange-600 text-white rounded-md text-sm hover:bg-orange-700 transition-colors"
+                    @click="exportBookmarks"
+                  >
+                    导出收藏
+                  </button>
+                  <button 
+                    v-if="userStore.isLoggedIn && selectedBookmarks.value.length > 0" 
+                    class="flex-1 sm:flex-none px-3 py-2 bg-red-600 text-white rounded-md text-sm hover:bg-red-700 transition-colors"
+                    @click="deleteSelectedBookmarks"
+                  >
+                    删除所选 ({{ selectedBookmarks.value.length }})
+                  </button>
                 </div>
               </div>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" ref="bookmarksContainer">
-              <div v-for="bookmark in bookmarkStore.bookmarks" :key="bookmark.bookmark_id" class="bg-white dark:bg-gray-600 rounded-lg p-4 hover:shadow-md transition-shadow">
+              <div v-for="bookmark in bookmarkStore.bookmarks" :key="bookmark.bookmark_id" class="bg-white dark:bg-gray-600 rounded-lg p-4 hover:shadow-md transition-shadow border border-gray-200 dark:border-gray-500">
                 <div class="flex items-start justify-between mb-2">
                   <div class="flex items-center gap-2">
+                    <input 
+                      v-if="userStore.isLoggedIn" 
+                      type="checkbox" 
+                      :checked="selectedBookmarks.value.includes(bookmark.bookmark_id)"
+                      @change="toggleBookmarkSelection(bookmark.bookmark_id)"
+                      class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-700 border-gray-300 dark:border-gray-600"
+                    >
                     <img v-if="bookmark.icon" :src="bookmark.icon" alt="Favicon" class="w-6 h-6 rounded">
                     <h3 class="font-medium text-gray-900 dark:text-white" v-html="highlightKeywords(bookmark.title, searchQuery)"></h3>
                   </div>
@@ -160,8 +176,8 @@
                 </div>
                 <p class="text-sm text-gray-600 dark:text-gray-400 mb-3" v-html="highlightKeywords(bookmark.description, searchQuery)"></p>
                 <a :href="bookmark.url" target="_blank" rel="noopener noreferrer" class="text-sm text-blue-600 dark:text-blue-400 truncate block mb-2" v-html="highlightKeywords(bookmark.url, searchQuery)"></a>
-                <div class="flex flex-wrap gap-1">
-                  <span v-for="tag in bookmark.tags.split(',')" :key="tag" class="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded">
+                <div class="flex flex-wrap gap-1" v-if="bookmark.tags && bookmark.tags.trim()">
+                  <span v-for="tag in bookmark.tags.split(',')" :key="tag" v-if="tag && tag.trim()" class="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded">
                     {{ tag }}
                   </span>
                 </div>
@@ -300,6 +316,9 @@ const isImportModalOpen = ref(false)
 const importFile = ref(null)
 const importLoading = ref(false)
 const importError = ref('')
+
+// 多选删除状态
+const selectedBookmarks = ref([])
 
 onMounted(async () => {
   // 初始化用户状态
@@ -665,23 +684,105 @@ const handleImport = async () => {
   }
 }
 
-// 切换分类公开/私有状态
-const toggleCategoryPublic = async (category) => {
+// 导出收藏
+const exportBookmarks = async () => {
   try {
-    // 创建更新后的分类对象
-    const updatedCategory = {
-      ...category,
-      is_public: category.is_public ? 0 : 1
-    }
+    // 确保我们有最新的书签数据
+    await bookmarkStore.fetchBookmarks()
+    await bookmarkStore.fetchCategories()
     
-    // 调用bookmarkStore的方法更新分类
-    const success = await bookmarkStore.updateCategory(updatedCategory)
+    // 按分类组织书签
+    const bookmarksByCategory = {}
+    bookmarkStore.bookmarks.forEach(bookmark => {
+      const categoryName = bookmarkStore.categories.find(c => c.cate_id === bookmark.cate_id)?.cate_name || '未分类'
+      if (!bookmarksByCategory[categoryName]) {
+        bookmarksByCategory[categoryName] = []
+      }
+      bookmarksByCategory[categoryName].push(bookmark)
+    })
     
-    if (success) {
-      // 更新成功，无需额外操作，因为bookmarkStore会自动更新分类列表
-    }
+    // 生成Edge浏览器格式的HTML
+    let html = `<!DOCTYPE NETSCAPE-Bookmark-file-1>
+<!-- This is an automatically generated file.
+     It will be read and overwritten.
+     DO NOT EDIT! -->
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<TITLE>Bookmarks</TITLE>
+<H1>Bookmarks</H1>
+<DL><p>
+`
+    
+    // 添加每个分类及其书签
+    Object.entries(bookmarksByCategory).forEach(([categoryName, bookmarks]) => {
+      html += `<DT><H3>${categoryName}</H3>
+<DL><p>
+`
+      
+      bookmarks.forEach(bookmark => {
+        html += `<DT><A HREF="${bookmark.url}" ADD_DATE="${Math.floor(new Date(bookmark.create_time).getTime() / 1000)}" LAST_MODIFIED="${Math.floor(new Date(bookmark.update_time).getTime() / 1000)}"${bookmark.description ? ` TITLE="${bookmark.description}"` : ''}>${bookmark.title}</A>
+`
+      })
+      
+      html += `</DL><p>
+`
+    })
+    
+    html += `</DL><p>`
+    
+    // 创建Blob并下载
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `bookmarks_${new Date().toISOString().split('T')[0]}.html`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
   } catch (error) {
-    console.error('切换分类状态失败:', error)
+    console.error('导出失败:', error)
+    alert('导出失败，请重试')
   }
 }
+
+// 切换书签选择状态
+const toggleBookmarkSelection = (bookmarkId) => {
+  const index = selectedBookmarks.value.indexOf(bookmarkId)
+  if (index > -1) {
+    selectedBookmarks.value.splice(index, 1)
+  } else {
+    selectedBookmarks.value.push(bookmarkId)
+  }
+}
+
+// 切换全选状态
+const toggleSelectAll = () => {
+  if (selectedBookmarks.value.length === bookmarkStore.bookmarks.length) {
+    // 取消全选
+    selectedBookmarks.value = []
+  } else {
+    // 全选
+    selectedBookmarks.value = bookmarkStore.bookmarks.map(bookmark => bookmark.bookmark_id)
+  }
+}
+
+// 删除选中的书签
+const deleteSelectedBookmarks = async () => {
+  if (selectedBookmarks.value.length === 0) return
+  
+  if (confirm(`确定要删除选中的 ${selectedBookmarks.value.length} 个收藏吗？`)) {
+    try {
+      for (const bookmarkId of selectedBookmarks.value) {
+        await bookmarkStore.deleteBookmark(bookmarkId)
+      }
+      // 清空选择
+      selectedBookmarks.value = []
+    } catch (error) {
+      console.error('删除失败:', error)
+      alert('删除失败，请重试')
+    }
+  }
+}
+
+
 </script>

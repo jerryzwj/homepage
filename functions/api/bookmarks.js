@@ -144,14 +144,13 @@ export async function onRequestPut(context) {
     const db = env.DB;
     
     await db.prepare(
-      'UPDATE bookmarks SET title = ?, url = ?, icon = ?, description = ?, tags = ?, sort = ?, update_time = CURRENT_TIMESTAMP WHERE bookmark_id = ? AND user_id = ?'
+      'UPDATE bookmarks SET title = ?, url = ?, icon = ?, description = ?, tags = ?, update_time = CURRENT_TIMESTAMP WHERE bookmark_id = ? AND user_id = ?'
     ).bind(
       body.title, 
       body.url, 
       body.icon || '', 
       body.description || '', 
       body.tags || '', 
-      body.sort, 
       body.bookmark_id, 
       userId
     ).run();

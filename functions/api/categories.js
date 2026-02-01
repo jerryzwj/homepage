@@ -79,14 +79,13 @@ export async function onRequestPost(context) {
     const sort = (maxSortResult.results[0]?.max_sort || 0) + 1;
     
     const result = await db.prepare(
-      'INSERT INTO categories (user_id, cate_name, cate_desc, cate_cover, sort, is_public, create_time, update_time) VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)'
+      'INSERT INTO categories (user_id, cate_name, cate_desc, cate_cover, sort, create_time, update_time) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)'
     ).bind(
       userId, 
       body.cate_name, 
       body.cate_desc || '', 
       body.cate_cover || '', 
-      sort, 
-      body.is_public || 0
+      sort
     ).run();
     
     return new Response(JSON.stringify({ success: true, id: result.meta.lastInsertRowid }), {
@@ -120,13 +119,12 @@ export async function onRequestPut(context) {
     const db = env.DB;
     
     await db.prepare(
-      'UPDATE categories SET cate_name = ?, cate_desc = ?, cate_cover = ?, sort = ?, is_public = ?, update_time = CURRENT_TIMESTAMP WHERE cate_id = ? AND user_id = ?'
+      'UPDATE categories SET cate_name = ?, cate_desc = ?, cate_cover = ?, sort = ?, update_time = CURRENT_TIMESTAMP WHERE cate_id = ? AND user_id = ?'
     ).bind(
       body.cate_name, 
       body.cate_desc || '', 
       body.cate_cover || '', 
-      body.sort, 
-      body.is_public || 0,
+      body.sort,
       body.cate_id,
       userId
     ).run();
