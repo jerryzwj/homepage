@@ -977,11 +977,5 @@ const handleExport = async () => {
   }
 }
 
-// 跳转到书签链接
-const goToBookmark = (url) => {
-  console.log('跳转到:', url)
-  window.open(url, '_blank', 'noopener,noreferrer')
-}
-
 
 </script>
