@@ -26,7 +26,7 @@
       <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
         <!-- 分类侧边栏 -->
         <div class="md:col-span-1">
-          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4">
+          <div class="bg-gray-50 dark:bg-gray-800 rounded-lg shadow-sm p-4">
             <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">分类管理</h2>
             <div class="space-y-2" ref="categoriesContainer">
               <!-- 全部选项 -->
@@ -96,7 +96,7 @@
         
         <!-- 收藏卡片区域 -->
         <div class="md:col-span-3">
-          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-6">
+          <div class="bg-gray-50 dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-6">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
               <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
                 {{ bookmarkStore.currentCategory ? 
@@ -153,13 +153,13 @@
               </div>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4" ref="bookmarksContainer">
-              <div v-for="bookmark in bookmarkStore.bookmarks" :key="bookmark.bookmark_id" class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 hover:shadow-md transition-shadow border border-gray-200 dark:border-gray-500">
+              <div v-for="bookmark in bookmarkStore.bookmarks" :key="bookmark.bookmark_id" class="bg-white dark:bg-gray-700 rounded-lg p-3 hover:shadow-md transition-shadow border border-gray-200 dark:border-gray-500">
                 <div class="flex items-start justify-between mb-2">
-                  <div class="flex items-center gap-2">
+                  <div class="flex items-center gap-2 flex-1">
                     <div class="w-6 h-6 rounded flex items-center justify-center bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-200 text-xs font-medium">
                       {{ bookmark.title.charAt(0).toUpperCase() }}
                     </div>
-                    <h3 class="font-medium text-gray-900 dark:text-white" v-html="highlightKeywords(bookmark.title, searchQuery)"></h3>
+                    <h3 class="font-medium text-gray-900 dark:text-white truncate" v-html="highlightKeywords(bookmark.title, searchQuery)"></h3>
                   </div>
                   <div v-if="userStore.isLoggedIn" class="flex items-center gap-1">
                     <button 
