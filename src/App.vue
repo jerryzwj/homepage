@@ -90,11 +90,11 @@
                   }}
                 </h2>
                 <button 
-                  v-if="userStore.isLoggedIn && bookmarkStore.bookmarks.length > 0" 
+                  v-if="userStore.isLoggedIn && bookmarkStore.bookmarks && bookmarkStore.bookmarks.length > 0" 
                   class="px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                   @click="toggleSelectAll"
                 >
-                  {{ selectedBookmarks.value.length === bookmarkStore.bookmarks.length ? '取消全选' : '全选' }}
+                  {{ selectedBookmarks.value.length === (bookmarkStore.bookmarks?.length || 0) ? '取消全选' : '全选' }}
                 </button>
               </div>
               <div class="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
@@ -762,6 +762,11 @@ const toggleBookmarkSelection = (bookmarkId) => {
 
 // 切换全选状态
 const toggleSelectAll = () => {
+  if (!bookmarkStore.bookmarks) {
+    selectedBookmarks.value = []
+    return
+  }
+  
   if (selectedBookmarks.value.length === bookmarkStore.bookmarks.length) {
     // 取消全选
     selectedBookmarks.value = []
