@@ -152,33 +152,113 @@
                 </div>
               </div>
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4" ref="bookmarksContainer">
-              <div v-for="bookmark in bookmarkStore.bookmarks" :key="bookmark.bookmark_id" class="bg-blue-50 dark:bg-purple-900/30 rounded-lg p-3 hover:shadow-md transition-shadow border border-blue-100 dark:border-purple-700">
+            <!-- 按分类分组显示卡片 -->
+            <div v-if="bookmarkStore.categories.length > 0" class="space-y-8" ref="bookmarksContainer">
+              <div v-for="category in bookmarkStore.categories" :key="category.cate_id" class="space-y-3">
+                <!-- 分类标题 -->
+                <div class="flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-500 dark:text-purple-400"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                  <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ category.cate_name }}</h3>
+                  <span class="text-sm text-gray-500 dark:text-gray-400">({{ bookmarkStore.bookmarks.filter(b => b.cate_id === category.cate_id).length }}个)</span>
+                </div>
+                <!-- 分类卡片组 -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                  <div v-for="bookmark in bookmarkStore.bookmarks.filter(b => b.cate_id === category.cate_id)" :key="bookmark.bookmark_id" class="bg-blue-100 dark:bg-purple-900/30 rounded-lg p-3 hover:shadow-md transition-shadow border border-blue-200 dark:border-purple-700">
+                    <div class="flex items-start justify-between mb-2">
+                      <div class="flex items-center gap-2 flex-1 min-w-0">
+                        <div class="w-6 h-6 rounded flex items-center justify-center bg-blue-200 dark:bg-purple-800 text-blue-700 dark:text-purple-200 text-xs font-medium">
+                          {{ bookmark.title.charAt(0).toUpperCase() }}
+                        </div>
+                        <h3 class="font-medium text-gray-900 dark:text-white truncate whitespace-nowrap overflow-hidden" v-html="highlightKeywords(bookmark.title, searchQuery)"></h3>
+                      </div>
+                      <div v-if="userStore.isLoggedIn" class="flex items-center gap-1">
+                        <button 
+                          class="p-1 hover:bg-blue-200 dark:hover:bg-purple-800 rounded"
+                          @click.stop="openEditBookmarkModal(bookmark)"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500 dark:text-gray-400"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+                        </button>
+                        <button 
+                          class="p-1 hover:bg-blue-200 dark:hover:bg-purple-800 rounded"
+                          @click.stop="deleteBookmark(bookmark.bookmark_id)"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-500"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                        </button>
+                      </div>
+                    </div>
+                    <a :href="bookmark.url" target="_blank" rel="noopener noreferrer" class="text-sm text-blue-600 dark:text-blue-400 truncate block" v-html="highlightKeywords(bookmark.url, searchQuery)"></a>
+                    <div class="mt-2 text-xs text-gray-500 dark:text-gray-400 truncate">
+                      {{ category.cate_name }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- 未分类卡片 -->
+              <div v-if="bookmarkStore.bookmarks.filter(b => !b.cate_id || b.cate_id === '').length > 0" class="space-y-3">
+                <div class="flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-500 dark:text-purple-400"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                  <h3 class="text-lg font-semibold text-gray-900 dark:text-white">未分类</h3>
+                  <span class="text-sm text-gray-500 dark:text-gray-400">({{ bookmarkStore.bookmarks.filter(b => !b.cate_id || b.cate_id === '').length }}个)</span>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                  <div v-for="bookmark in bookmarkStore.bookmarks.filter(b => !b.cate_id || b.cate_id === '')" :key="bookmark.bookmark_id" class="bg-blue-100 dark:bg-purple-900/30 rounded-lg p-3 hover:shadow-md transition-shadow border border-blue-200 dark:border-purple-700">
+                    <div class="flex items-start justify-between mb-2">
+                      <div class="flex items-center gap-2 flex-1 min-w-0">
+                        <div class="w-6 h-6 rounded flex items-center justify-center bg-blue-200 dark:bg-purple-800 text-blue-700 dark:text-purple-200 text-xs font-medium">
+                          {{ bookmark.title.charAt(0).toUpperCase() }}
+                        </div>
+                        <h3 class="font-medium text-gray-900 dark:text-white truncate whitespace-nowrap overflow-hidden" v-html="highlightKeywords(bookmark.title, searchQuery)"></h3>
+                      </div>
+                      <div v-if="userStore.isLoggedIn" class="flex items-center gap-1">
+                        <button 
+                          class="p-1 hover:bg-blue-200 dark:hover:bg-purple-800 rounded"
+                          @click.stop="openEditBookmarkModal(bookmark)"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500 dark:text-gray-400"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+                        </button>
+                        <button 
+                          class="p-1 hover:bg-blue-200 dark:hover:bg-purple-800 rounded"
+                          @click.stop="deleteBookmark(bookmark.bookmark_id)"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-500"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                        </button>
+                      </div>
+                    </div>
+                    <a :href="bookmark.url" target="_blank" rel="noopener noreferrer" class="text-sm text-blue-600 dark:text-blue-400 truncate block" v-html="highlightKeywords(bookmark.url, searchQuery)"></a>
+                    <div class="mt-2 text-xs text-gray-500 dark:text-gray-400 truncate">
+                      未分类
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div v-else-if="bookmarkStore.bookmarks.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4" ref="bookmarksContainer">
+              <div v-for="bookmark in bookmarkStore.bookmarks" :key="bookmark.bookmark_id" class="bg-blue-100 dark:bg-purple-900/30 rounded-lg p-3 hover:shadow-md transition-shadow border border-blue-200 dark:border-purple-700">
                 <div class="flex items-start justify-between mb-2">
                   <div class="flex items-center gap-2 flex-1 min-w-0">
-                    <div class="w-6 h-6 rounded flex items-center justify-center bg-blue-100 dark:bg-purple-800 text-blue-600 dark:text-purple-200 text-xs font-medium">
+                    <div class="w-6 h-6 rounded flex items-center justify-center bg-blue-200 dark:bg-purple-800 text-blue-700 dark:text-purple-200 text-xs font-medium">
                       {{ bookmark.title.charAt(0).toUpperCase() }}
                     </div>
                     <h3 class="font-medium text-gray-900 dark:text-white truncate whitespace-nowrap overflow-hidden" v-html="highlightKeywords(bookmark.title, searchQuery)"></h3>
                   </div>
                   <div v-if="userStore.isLoggedIn" class="flex items-center gap-1">
                     <button 
-                    class="p-1 hover:bg-blue-100 dark:hover:bg-purple-800 rounded"
-                    @click.stop="openEditBookmarkModal(bookmark)"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500 dark:text-gray-400"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
-                  </button>
-                  <button 
-                    class="p-1 hover:bg-blue-100 dark:hover:bg-purple-800 rounded"
-                    @click.stop="deleteBookmark(bookmark.bookmark_id)"
-                  >
+                      class="p-1 hover:bg-blue-200 dark:hover:bg-purple-800 rounded"
+                      @click.stop="openEditBookmarkModal(bookmark)"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500 dark:text-gray-400"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+                    </button>
+                    <button 
+                      class="p-1 hover:bg-blue-200 dark:hover:bg-purple-800 rounded"
+                      @click.stop="deleteBookmark(bookmark.bookmark_id)"
+                    >
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-500"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                     </button>
                   </div>
                 </div>
                 <a :href="bookmark.url" target="_blank" rel="noopener noreferrer" class="text-sm text-blue-600 dark:text-blue-400 truncate block" v-html="highlightKeywords(bookmark.url, searchQuery)"></a>
                 <div class="mt-2 text-xs text-gray-500 dark:text-gray-400 truncate">
-                  {{ bookmarkStore.categories.find(c => c.cate_id === bookmark.cate_id)?.cate_name || '未分类' }}
+                  未分类
                 </div>
               </div>
             </div>
