@@ -47,8 +47,9 @@
 homepage/
 ├── src/
 │   ├── components/         # Vue 组件
-│   │   ├── CategoryModal.vue    # 分类管理模态框
-│   │   └── BookmarkModal.vue    # 收藏管理模态框
+│   │   ├── AuthModal.vue        # 登录/注册模态框
+│   │   ├── BookmarkModal.vue    # 收藏管理模态框
+│   │   └── CategoryModal.vue    # 分类管理模态框
 │   ├── stores/             # Pinia 状态管理
 │   │   ├── user.js              # 用户状态管理
 │   │   └── bookmark.js          # 收藏状态管理
@@ -59,11 +60,16 @@ homepage/
 │   └── api/                # API 处理函数
 │       ├── users.js             # 用户相关 API
 │       ├── categories.js        # 分类相关 API
-│       ├── bookmarks.js         # 收藏相关 API
-│       └── public.js            # 公开访问 API
+│       ├── fetch-url.js         # URL 信息抓取 API
+│       └── bookmarks/           # 收藏相关 API
+│           ├── index.js         # 收藏基础操作
+│           ├── import.js        # 收藏导入功能
+│           └── search.js        # 收藏搜索功能
 ├── schema.sql              # D1 数据库表结构
 ├── package.json            # 项目配置和依赖
 ├── vite.config.js          # Vite 构建配置
+├── tailwind.config.js      # Tailwind CSS 配置
+├── postcss.config.js       # PostCSS 配置
 └── dist/                   # 生产环境构建文件
 ```
 
@@ -182,6 +188,324 @@ npm run dev
 - `sort` (INTEGER): 排序值
 - `create_time` (DATETIME): 创建时间
 - `update_time` (DATETIME): 更新时间
+
+## API 使用方法
+
+### 认证机制
+- 所有需要认证的API都需要在请求头中添加 `Authorization: Bearer <token>`
+- Token 由登录/注册接口返回，有效期为7天
+
+### 1. 用户相关 API
+
+#### 1.1 注册
+- **URL**: `/api/users`
+- **方法**: `POST`
+- **请求体**:
+  ```json
+  {
+    "action": "register",
+    "username": "用户名",
+    "password": "密码"
+  }
+  ```
+- **响应**:
+  ```json
+  {
+    "success": true,
+    "token": "JWT token",
+    "user": {
+      "user_id": "用户ID",
+      "username": "用户名"
+    }
+  }
+  ```
+
+#### 1.2 登录
+- **URL**: `/api/users`
+- **方法**: `POST`
+- **请求体**:
+  ```json
+  {
+    "action": "login",
+    "username": "用户名",
+    "password": "密码"
+  }
+  ```
+- **响应**:
+  ```json
+  {
+    "success": true,
+    "token": "JWT token",
+    "user": {
+      "user_id": "用户ID",
+      "username": "用户名",
+      "avatar": "头像URL",
+      "dark_mode": 0
+    }
+  }
+  ```
+
+#### 1.3 获取用户信息
+- **URL**: `/api/users`
+- **方法**: `GET`
+- **请求头**: `Authorization: Bearer <token>`
+- **响应**:
+  ```json
+  {
+    "user_id": "用户ID",
+    "username": "用户名",
+    "avatar": "头像URL",
+    "dark_mode": 0,
+    "create_time": "2024-01-01T00:00:00Z",
+    "update_time": "2024-01-01T00:00:00Z"
+  }
+  ```
+
+#### 1.4 更新用户设置
+- **URL**: `/api/users`
+- **方法**: `PUT`
+- **请求头**: `Authorization: Bearer <token>`
+- **请求体**:
+  ```json
+  {
+    "dark_mode": 1
+  }
+  ```
+- **响应**:
+  ```json
+  {
+    "success": true
+  }
+  ```
+
+### 2. 分类相关 API
+
+#### 2.1 获取分类列表
+- **URL**: `/api/categories`
+- **方法**: `GET`
+- **请求头**: `Authorization: Bearer <token>`
+- **响应**:
+  ```json
+  [
+    {
+      "cate_id": 1,
+      "user_id": "用户ID",
+      "cate_name": "分类名称",
+      "cate_desc": "分类描述",
+      "cate_cover": "分类封面",
+      "sort": 1,
+      "is_public": 0,
+      "create_time": "2024-01-01T00:00:00Z",
+      "update_time": "2024-01-01T00:00:00Z"
+    }
+  ]
+  ```
+
+#### 2.2 创建分类
+- **URL**: `/api/categories`
+- **方法**: `POST`
+- **请求头**: `Authorization: Bearer <token>`
+- **请求体**:
+  ```json
+  {
+    "cate_name": "分类名称",
+    "cate_desc": "分类描述",
+    "cate_cover": "分类封面",
+    "is_public": 0
+  }
+  ```
+- **响应**:
+  ```json
+  {
+    "success": true,
+    "id": 1
+  }
+  ```
+
+#### 2.3 更新分类
+- **URL**: `/api/categories`
+- **方法**: `PUT`
+- **请求头**: `Authorization: Bearer <token>`
+- **请求体**:
+  ```json
+  {
+    "cate_id": 1,
+    "cate_name": "分类名称",
+    "cate_desc": "分类描述",
+    "cate_cover": "分类封面",
+    "sort": 1,
+    "is_public": 0
+  }
+  ```
+- **响应**:
+  ```json
+  {
+    "success": true
+  }
+  ```
+
+#### 2.4 删除分类
+- **URL**: `/api/categories?id=1`
+- **方法**: `DELETE`
+- **请求头**: `Authorization: Bearer <token>`
+- **响应**:
+  ```json
+  {
+    "success": true
+  }
+  ```
+
+### 3. 书签相关 API
+
+#### 3.1 获取书签列表
+- **URL**: `/api/bookmarks?cate_id=1`
+- **方法**: `GET`
+- **请求头**: `Authorization: Bearer <token>`
+- **参数**: `cate_id` (可选，指定分类ID)
+- **响应**:
+  ```json
+  [
+    {
+      "bookmark_id": 1,
+      "cate_id": 1,
+      "user_id": "用户ID",
+      "title": "网页标题",
+      "url": "网页地址",
+      "icon": "网页图标",
+      "description": "网页描述",
+      "tags": "标签1,标签2",
+      "sort": 1,
+      "create_time": "2024-01-01T00:00:00Z",
+      "update_time": "2024-01-01T00:00:00Z"
+    }
+  ]
+  ```
+
+#### 3.2 创建书签
+- **URL**: `/api/bookmarks`
+- **方法**: `POST`
+- **请求头**: `Authorization: Bearer <token>`
+- **请求体**:
+  ```json
+  {
+    "cate_id": 1,
+    "title": "网页标题",
+    "url": "网页地址",
+    "icon": "网页图标",
+    "description": "网页描述",
+    "tags": "标签1,标签2"
+  }
+  ```
+- **响应**:
+  ```json
+  {
+    "success": true,
+    "id": 1
+  }
+  ```
+
+#### 3.3 更新书签
+- **URL**: `/api/bookmarks`
+- **方法**: `PUT`
+- **请求头**: `Authorization: Bearer <token>`
+- **请求体**:
+  ```json
+  {
+    "bookmark_id": 1,
+    "title": "网页标题",
+    "url": "网页地址",
+    "icon": "网页图标",
+    "description": "网页描述",
+    "tags": "标签1,标签2"
+  }
+  ```
+- **响应**:
+  ```json
+  {
+    "success": true
+  }
+  ```
+
+#### 3.4 删除书签
+- **URL**: `/api/bookmarks?id=1`
+- **方法**: `DELETE`
+- **请求头**: `Authorization: Bearer <token>`
+- **响应**:
+  ```json
+  {
+    "success": true
+  }
+  ```
+
+#### 3.5 导入书签
+- **URL**: `/api/bookmarks/import`
+- **方法**: `POST`
+- **请求头**: `Authorization: Bearer <token>`
+- **请求体**:
+  ```json
+  {
+    "bookmarks": [
+      {
+        "title": "网页标题",
+        "url": "网页地址",
+        "category": "分类名称",
+        "description": "网页描述",
+        "tags": "标签1,标签2"
+      }
+    ]
+  }
+  ```
+- **响应**:
+  ```json
+  {
+    "success": true,
+    "imported": 1
+  }
+  ```
+
+#### 3.6 搜索书签
+- **URL**: `/api/bookmarks/search?q=关键词`
+- **方法**: `GET`
+- **请求头**: `Authorization: Bearer <token>`
+- **参数**: `q` (搜索关键词)
+- **响应**:
+  ```json
+  [
+    {
+      "bookmark_id": 1,
+      "cate_id": 1,
+      "user_id": "用户ID",
+      "title": "网页标题",
+      "url": "网页地址",
+      "icon": "网页图标",
+      "description": "网页描述",
+      "tags": "标签1,标签2",
+      "sort": 1,
+      "create_time": "2024-01-01T00:00:00Z",
+      "update_time": "2024-01-01T00:00:00Z"
+    }
+  ]
+  ```
+
+### 4. URL 信息抓取 API
+
+#### 4.1 抓取网页信息
+- **URL**: `/api/fetch-url`
+- **方法**: `POST`
+- **请求体**:
+  ```json
+  {
+    "url": "https://example.com"
+  }
+  ```
+- **响应**:
+  ```json
+  {
+    "title": "网页标题",
+    "description": "网页描述",
+    "icon": "网页图标"
+  }
+  ```
 
 ## 后续维护
 

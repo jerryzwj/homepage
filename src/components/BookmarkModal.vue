@@ -183,7 +183,18 @@ const close = () => {
 const save = async () => {
   isLoading.value = true
   try {
-    emit('save', { ...form })
+    // 处理标签，支持空格和中文逗号作为分隔符
+    const processedForm = { ...form }
+    if (processedForm.tags) {
+      // 将空格和中文逗号替换为英文逗号，然后分割并过滤空标签，最后重新连接
+      processedForm.tags = processedForm.tags
+        .replace(/[\s，]/g, ',') // 替换空格和中文逗号为英文逗号
+        .split(',') // 分割标签
+        .map(tag => tag.trim()) // 去除每个标签的前后空格
+        .filter(tag => tag) // 过滤空标签
+        .join(',') // 重新连接为逗号分隔的字符串
+    }
+    emit('save', processedForm)
   } finally {
     isLoading.value = false
   }

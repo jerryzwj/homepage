@@ -105,19 +105,26 @@
                 }}
               </h2>
               <div class="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
-                <div class="relative flex-grow">
-                  <input 
-                    type="text" 
-                    v-model="searchQuery" 
-                    placeholder="搜索收藏..." 
-                    class="w-full px-3 py-2 pr-8 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-700 dark:text-white"
-                    @input="handleSearch"
-                  >
+                <div class="flex flex-grow gap-2">
+                  <div class="relative flex-grow">
+                    <input 
+                      type="text" 
+                      v-model="searchQuery" 
+                      placeholder="搜索收藏..." 
+                      class="w-full px-3 py-2 pr-8 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-700 dark:text-white"
+                    >
+                    <button 
+                      class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400"
+                      @click="clearSearch"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                  </div>
                   <button 
-                    class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400"
-                    @click="clearSearch"
+                    class="px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors whitespace-nowrap"
+                    @click="handleSearch"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    搜索
                   </button>
                 </div>
                 <div class="flex gap-2 w-full sm:w-auto">
