@@ -119,6 +119,13 @@
                   >
                     导入收藏
                   </button>
+                  <button 
+                    v-if="userStore.isLoggedIn" 
+                    class="flex-1 sm:flex-none px-3 py-2 bg-indigo-600 text-white rounded-md text-sm hover:bg-indigo-700 transition-colors"
+                    @click="openExportModal"
+                  >
+                    导出收藏
+                  </button>
                 </div>
               </div>
             </div>
@@ -247,6 +254,42 @@
         </div>
       </div>
     </div>
+    
+    <!-- 导出模态框 -->
+    <div v-if="isExportModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div class="bg-white dark:bg-gray-700 rounded-lg shadow-lg w-full max-w-md">
+        <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white">导出收藏</h3>
+          <button @click="closeExportModal" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        </div>
+        <div class="p-4">
+          <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+            导出收藏为HTML文件，可在Edge浏览器中导入。导出过程会包含所有分类和书签。
+          </p>
+          <div v-if="exportError" class="mb-4 p-3 bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 rounded-md">
+            {{ exportError }}
+          </div>
+          <div class="flex justify-end gap-3">
+            <button 
+              type="button" 
+              @click="closeExportModal" 
+              class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+            >
+              取消
+            </button>
+            <button 
+              type="button" 
+              @click="handleExport" 
+              class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+            >
+              开始导出
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -286,6 +329,10 @@ const isImportModalOpen = ref(false)
 const importFile = ref(null)
 const importLoading = ref(false)
 const importError = ref('')
+
+// 导出模态框状态
+const isExportModalOpen = ref(false)
+const exportError = ref('')
 
 onMounted(async () => {
   // 初始化用户状态
@@ -569,37 +616,49 @@ const handleImport = async () => {
         const importData = []
         
         // 提取文件夹（分类）信息
-        const folderNodes = doc.querySelectorAll('h3')
-        folderNodes.forEach(folderNode => {
-          const categoryName = folderNode.textContent
-          // 找到该文件夹下的所有书签
-          let nextNode = folderNode.nextElementSibling
-          while (nextNode && nextNode.tagName !== 'H3') {
-            const links = nextNode.querySelectorAll('a')
-            links.forEach(link => {
-              const title = link.textContent
-              const url = link.getAttribute('href')
-              if (title && url) {
-                importData.push({
-                  title: title,
-                  url: url,
-                  category: categoryName,
-                  description: link.getAttribute('title') || '',
-                  tags: ''
+        // 查找所有DT标签，然后过滤出包含H3的（分类）
+        const dtNodes = doc.querySelectorAll('dt')
+        dtNodes.forEach(dtNode => {
+          const h3Node = dtNode.querySelector('h3')
+          if (h3Node) {
+            const categoryName = h3Node.textContent
+            
+            // 找到该分类对应的DL标签（包含书签）
+            let nextNode = dtNode.nextElementSibling
+            while (nextNode) {
+              if (nextNode.tagName === 'DL') {
+                // 在DL中查找所有书签链接
+                const links = nextNode.querySelectorAll('a')
+                links.forEach(link => {
+                  const title = link.textContent
+                  const url = link.getAttribute('href')
+                  if (title && url) {
+                    importData.push({
+                      title: title,
+                      url: url,
+                      category: categoryName,
+                      description: link.getAttribute('title') || '',
+                      tags: ''
+                    })
+                  }
                 })
+                break
+              } else if (nextNode.tagName === 'DT' && nextNode.querySelector('h3')) {
+                // 遇到下一个分类，停止当前分类的处理
+                break
               }
-            })
-            nextNode = nextNode.nextElementSibling
+              nextNode = nextNode.nextElementSibling
+            }
           }
         })
         
-        // 处理根级书签
-        const rootLinks = doc.querySelectorAll('a')
-        rootLinks.forEach(link => {
+        // 处理根级书签（不在任何分类中的书签）
+        const allLinks = doc.querySelectorAll('a')
+        allLinks.forEach(link => {
           const title = link.textContent
           const url = link.getAttribute('href')
           if (title && url) {
-            // 检查是否已经在文件夹中处理过
+            // 检查是否已经在分类中处理过
             const isAlreadyProcessed = importData.some(item => item.url === url)
             if (!isAlreadyProcessed) {
               importData.push({
@@ -648,6 +707,96 @@ const handleImport = async () => {
   } catch (error) {
     importError.value = '导入失败: ' + error.message
     importLoading.value = false
+  }
+}
+
+// 打开导出模态框
+const openExportModal = () => {
+  isExportModalOpen.value = true
+  exportError.value = ''
+}
+
+// 关闭导出模态框
+const closeExportModal = () => {
+  isExportModalOpen.value = false
+  exportError.value = ''
+}
+
+// 处理导出
+const handleExport = async () => {
+  try {
+    // 确保所有数据已加载
+    await loadData()
+    
+    // 构建HTML内容
+    let htmlContent = `<!DOCTYPE NETSCAPE-Bookmark-file-1>
+<!-- This is an automatically generated file.
+     It will be read and overwritten.
+     DO NOT EDIT! -->
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<TITLE>Bookmarks</TITLE>
+<H1>Bookmarks</H1>
+<DL><p>`
+    
+    // 按分类组织书签
+    const categories = bookmarkStore.categories
+    const bookmarks = bookmarkStore.bookmarks
+    
+    // 为每个分类生成HTML
+    categories.forEach(category => {
+      // 找到该分类下的所有书签
+      const categoryBookmarks = bookmarks.filter(bookmark => bookmark.cate_id === category.cate_id)
+      
+      if (categoryBookmarks.length > 0) {
+        htmlContent += `<DT><H3>${category.cate_name}</H3>
+<DL><p>`
+        
+        // 为每个书签生成HTML
+        categoryBookmarks.forEach(bookmark => {
+          htmlContent += `<DT><A HREF="${bookmark.url}"${bookmark.description ? ` TITLE="${bookmark.description}"` : ''}>${bookmark.title}</A>
+`
+        })
+        
+        htmlContent += `</DL><p>
+`
+      }
+    })
+    
+    // 处理未分类的书签
+    const uncategorizedBookmarks = bookmarks.filter(bookmark => {
+      return !categories.some(category => category.cate_id === bookmark.cate_id)
+    })
+    
+    if (uncategorizedBookmarks.length > 0) {
+      htmlContent += `<DT><H3>未分类</H3>
+<DL><p>`
+      
+      uncategorizedBookmarks.forEach(bookmark => {
+        htmlContent += `<DT><A HREF="${bookmark.url}"${bookmark.description ? ` TITLE="${bookmark.description}"` : ''}>${bookmark.title}</A>
+`
+      })
+      
+      htmlContent += `</DL><p>
+`
+    }
+    
+    htmlContent += `</DL><p>`
+    
+    // 创建Blob对象并下载
+    const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `favorites_${new Date().toISOString().split('T')[0]}.html`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+    
+    // 导出成功，关闭模态框
+    closeExportModal()
+  } catch (error) {
+    exportError.value = '导出失败: ' + error.message
   }
 }
 
