@@ -31,7 +31,7 @@
             <div class="space-y-2" ref="categoriesContainer">
               <!-- 全部选项 -->
               <div 
-                class="flex items-center justify-between p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                class="flex items-center justify-between p-2 rounded bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer"
                 @click="switchCategory(null)"
               >
                 <div class="flex items-center gap-2">
@@ -42,7 +42,7 @@
               <div 
                 v-for="category in bookmarkStore.categories" 
                 :key="category.cate_id" 
-                class="flex items-center justify-between p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                class="flex items-center justify-between p-2 rounded bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer"
                 @click="switchCategory(category.cate_id)"
               >
                 <div class="flex items-center gap-2">
@@ -151,10 +151,10 @@
                     </button>
                   </div>
                 </div>
-                <p class="text-sm text-gray-600 dark:text-gray-400 mb-3" v-html="highlightKeywords(bookmark.description, searchQuery)"></p>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-3 overflow-hidden text-ellipsis" style="display: -webkit-box; display: -moz-box; display: box; -webkit-line-clamp: 2; -moz-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; -moz-box-orient: vertical; box-orient: vertical;" v-html="highlightKeywords(bookmark.description, searchQuery)"></p>
                 <a :href="bookmark.url" target="_blank" rel="noopener noreferrer" class="text-sm text-blue-600 dark:text-blue-400 truncate block mb-2" v-html="highlightKeywords(bookmark.url, searchQuery)"></a>
-                <div class="flex flex-wrap gap-1">
-                  <span v-for="tag in bookmark.tags.split(',')" :key="tag" class="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded">
+                <div v-if="bookmark.tags && bookmark.tags.split(',').filter(tag => tag.trim()).length > 0" class="flex flex-wrap gap-1">
+                  <span v-for="tag in bookmark.tags.split(',').filter(tag => tag.trim())" :key="tag" class="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded">
                     {{ tag }}
                   </span>
                 </div>
