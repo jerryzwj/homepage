@@ -87,7 +87,8 @@ const form = reactive({
   cate_id: null,
   cate_name: '',
   cate_desc: '',
-  cate_cover: ''
+  cate_cover: '',
+  sort: 0
 })
 
 const isLoading = ref(false)
@@ -99,6 +100,7 @@ watch(() => props.category, (newCategory) => {
     form.cate_name = newCategory.cate_name
     form.cate_desc = newCategory.cate_desc || ''
     form.cate_cover = newCategory.cate_cover || ''
+    form.sort = newCategory.sort || 0
   }
 }, { immediate: true })
 
@@ -114,6 +116,7 @@ const resetForm = () => {
   form.cate_name = ''
   form.cate_desc = ''
   form.cate_cover = ''
+  form.sort = 0
 }
 
 const close = () => {
