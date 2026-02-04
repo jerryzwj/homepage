@@ -1,9 +1,97 @@
 <template>
   <div class="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
-    <header class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+    <header class="bg-white dark:bg-gray-800 shadow-sm border-b border-transparent">
       <div class="container mx-auto px-4 py-4 flex justify-between items-center">
         <h1 class="text-2xl font-bold text-gray-900 dark:text-white">收藏夹 Homepage</h1>
         <div class="flex items-center gap-4">
+          <!-- 分类管理下拉菜单 -->
+          <div class="relative">
+            <button @click="isCategoryMenuOpen = !isCategoryMenuOpen" class="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+              <span class="text-gray-700 dark:text-gray-300">分类管理</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500 dark:text-gray-400"><path d="m6 9 6 6 6-6"></path></svg>
+            </button>
+            <!-- 分类菜单下拉 -->
+            <div v-if="isCategoryMenuOpen" class="absolute left-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-transparent z-50">
+              <div class="py-1">
+                <div class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700">
+                  分类管理
+                </div>
+                <!-- 全部选项 -->
+                <div 
+                  class="flex items-center justify-between px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                  @click="switchCategory(null); isCategoryMenuOpen = false"
+                >
+                  <div class="flex items-center gap-2">
+                    <span class="text-gray-700 dark:text-gray-300 font-medium">全部</span>
+                  </div>
+                </div>
+                <!-- 分类列表 -->
+                <div 
+                  v-for="category in bookmarkStore.categories" 
+                  :key="category.cate_id" 
+                  class="flex items-center justify-between px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                  @click="switchCategory(category.cate_id); isCategoryMenuOpen = false"
+                >
+                  <div class="flex items-center gap-2">
+                    <span class="text-gray-700 dark:text-gray-300">{{ category.cate_name }}</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <button 
+                      class="p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded"
+                      @click.stop="openEditCategoryModal(category); isCategoryMenuOpen = false"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500 dark:text-gray-400"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+                    </button>
+                    <button 
+                      class="p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded"
+                      @click.stop="deleteCategory(category.cate_id); isCategoryMenuOpen = false"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-500"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                  </div>
+                </div>
+                <button 
+                  v-if="userStore.isLoggedIn" 
+                  class="w-full py-2 text-sm text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded mt-2 flex items-center justify-center gap-2"
+                  @click="openAddCategoryModal; isCategoryMenuOpen = false"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                  添加分类
+                </button>
+                <div v-else class="text-center py-2 text-gray-500 dark:text-gray-400 text-sm">
+                  登录后管理分类
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 标签管理下拉菜单 -->
+          <div class="relative">
+            <button @click="isTagMenuOpen = !isTagMenuOpen" class="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+              <span class="text-gray-700 dark:text-gray-300">标签管理</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500 dark:text-gray-400"><path d="m6 9 6 6 6-6"></path></svg>
+            </button>
+            <!-- 标签菜单下拉 -->
+            <div v-if="isTagMenuOpen" class="absolute left-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-transparent z-50">
+              <div class="py-1">
+                <div class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700">
+                  标签管理
+                </div>
+                <div class="px-4 py-2 flex flex-wrap gap-2">
+                  <span 
+                    v-for="tag in allTags" 
+                    :key="tag"
+                    class="px-3 py-1 rounded-full text-sm cursor-pointer transition-colors"
+                    :class="getTagColorClass(tag)"
+                    @click="filterByTag(tag); isTagMenuOpen = false"
+                  >
+                    {{ tag }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
           <button @click="userStore.toggleDarkMode" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
             <svg v-if="!userStore.darkMode" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-600 dark:text-gray-300"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
             <svg v-else xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-300 dark:text-gray-600"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
@@ -16,7 +104,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500 dark:text-gray-400"><path d="m6 9 6 6 6-6"></path></svg>
               </button>
               <!-- 用户菜单下拉 -->
-              <div v-if="isUserMenuOpen" class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-700 z-50">
+              <div v-if="isUserMenuOpen" class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-transparent z-50">
                 <div class="py-1">
                   <button @click="() => { openChangePasswordModal(); isUserMenuOpen = false; }" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
                     修改密码
@@ -44,80 +132,10 @@
     </header>
     
     <main class="container mx-auto px-4 py-8">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-        <!-- 分类侧边栏 -->
-        <div class="md:col-span-1">
-          <div class="bg-gray-50 dark:bg-gray-800 rounded-lg shadow-sm p-4 border border-gray-200 dark:border-gray-700">
-            <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">分类管理</h2>
-            <div class="space-y-2" ref="categoriesContainer">
-              <!-- 全部选项 -->
-              <div 
-                class="flex items-center justify-between p-2 rounded bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer border border-gray-200 dark:border-gray-600"
-                @click="switchCategory(null)"
-              >
-                <div class="flex items-center gap-2">
-                  <span class="text-gray-700 dark:text-gray-300 font-medium">全部</span>
-                </div>
-              </div>
-              <!-- 分类列表 -->
-              <div 
-                v-for="category in bookmarkStore.categories" 
-                :key="category.cate_id" 
-                class="flex items-center justify-between p-2 rounded bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer border border-gray-200 dark:border-gray-600"
-                @click="switchCategory(category.cate_id)"
-              >
-                <div class="flex items-center gap-2">
-                  <span class="text-gray-700 dark:text-gray-300">{{ category.cate_name }}</span>
-                </div>
-                <div class="flex items-center gap-2">
-                  <button 
-                    class="p-1 hover:bg-gray-100 dark:hover:bg-gray-600 rounded"
-                    @click.stop="openEditCategoryModal(category)"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500 dark:text-gray-400"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
-                  </button>
-                  <button 
-                    class="p-1 hover:bg-gray-100 dark:hover:bg-gray-600 rounded"
-                    @click.stop="deleteCategory(category.cate_id)"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-500"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                  </button>
-                </div>
-              </div>
-              <button 
-                v-if="userStore.isLoggedIn" 
-                class="w-full py-2 text-sm text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded mt-4 flex items-center justify-center gap-2"
-                @click="openAddCategoryModal"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                添加分类
-              </button>
-              <div v-else class="text-center py-4 text-gray-500 dark:text-gray-400 text-sm">
-                登录后管理分类
-              </div>
-            </div>
-          </div>
-          
-          <!-- 标签容器 -->
-          <div class="bg-gray-50 dark:bg-gray-800 rounded-lg shadow-sm p-4 mt-4">
-            <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">标签管理</h2>
-            <div class="flex flex-wrap gap-2">
-              <span 
-                v-for="tag in allTags" 
-                :key="tag"
-                class="px-3 py-1 rounded-full text-sm cursor-pointer transition-colors"
-                :class="getTagColorClass(tag)"
-                @click="filterByTag(tag)"
-              >
-                {{ tag }}
-              </span>
-            </div>
-          </div>
-        </div>
-        
+      <div class="grid grid-cols-1 gap-8">
         <!-- 收藏卡片区域 -->
-        <div class="md:col-span-3">
-          <div class="bg-gray-50 dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-6 border border-gray-200 dark:border-gray-700">
+        <div class="md:col-span-1">
+          <div class="bg-gray-50 dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-6 border border-transparent">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
               <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
                 {{ bookmarkStore.currentCategory ? 
@@ -170,7 +188,7 @@
                 </div>
                 <!-- 分类卡片组 -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                  <div v-for="bookmark in bookmarkStore.bookmarks.filter(b => b.cate_id === category.cate_id)" :key="bookmark.bookmark_id" class="bg-blue-100 dark:bg-purple-900/30 rounded-xl p-3 hover:shadow-md transition-shadow border border-blue-200 dark:border-purple-700 cursor-pointer"
+                  <div v-for="bookmark in bookmarkStore.bookmarks.filter(b => b.cate_id === category.cate_id)" :key="bookmark.bookmark_id" class="bg-blue-100 dark:bg-purple-900/30 rounded-xl p-3 hover:shadow-md transition-shadow border border-transparent cursor-pointer"
                        @click="goToBookmark(bookmark.url)">
                     <div class="flex items-start justify-between mb-2">
                       <div class="flex items-center gap-2 flex-1 min-w-0">
@@ -206,7 +224,7 @@
                   <span class="text-sm text-gray-500 dark:text-gray-400">({{ bookmarkStore.bookmarks.filter(b => !b.cate_id || b.cate_id === '').length }}个)</span>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                  <div v-for="bookmark in bookmarkStore.bookmarks.filter(b => !b.cate_id || b.cate_id === '')" :key="bookmark.bookmark_id" class="bg-blue-100 dark:bg-purple-900/30 rounded-xl p-3 hover:shadow-md transition-shadow border border-blue-200 dark:border-purple-700 cursor-pointer"
+                  <div v-for="bookmark in bookmarkStore.bookmarks.filter(b => !b.cate_id || b.cate_id === '')" :key="bookmark.bookmark_id" class="bg-blue-100 dark:bg-purple-900/30 rounded-xl p-3 hover:shadow-md transition-shadow border border-transparent cursor-pointer"
                        @click="goToBookmark(bookmark.url)">
                     <div class="flex items-start justify-between mb-2">
                       <div class="flex items-center gap-2 flex-1 min-w-0">
@@ -236,7 +254,7 @@
               </div>
             </div>
             <div v-else-if="bookmarkStore.bookmarks.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4" ref="bookmarksContainer">
-              <div v-for="bookmark in bookmarkStore.bookmarks" :key="bookmark.bookmark_id" class="bg-blue-100 dark:bg-purple-900/30 rounded-xl p-3 hover:shadow-md transition-shadow border border-blue-200 dark:border-purple-700 cursor-pointer"
+              <div v-for="bookmark in bookmarkStore.bookmarks" :key="bookmark.bookmark_id" class="bg-blue-100 dark:bg-purple-900/30 rounded-xl p-3 hover:shadow-md transition-shadow border border-transparent cursor-pointer"
                    @click="goToBookmark(bookmark.url)">
                 <div class="flex items-start justify-between mb-2">
                   <div class="flex items-center gap-2 flex-1 min-w-0">
@@ -304,7 +322,7 @@
     <!-- 导入模态框 -->
     <div v-if="isImportModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-md">
-        <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+        <div class="p-4 border-b border-transparent flex justify-between items-center">
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white">导入收藏</h3>
           <button @click="closeImportModal" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -362,7 +380,7 @@
     <!-- 导出模态框 -->
     <div v-if="isExportModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div class="bg-white dark:bg-gray-700 rounded-lg shadow-lg w-full max-w-md">
-        <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+        <div class="p-4 border-b border-transparent flex justify-between items-center">
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white">导出收藏</h3>
           <button @click="closeExportModal" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -394,6 +412,78 @@
         </div>
       </div>
     </div>
+    
+    <!-- 修改密码模态框 -->
+    <div v-if="isChangePasswordModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-md">
+        <div class="p-4 border-b border-transparent flex justify-between items-center">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white">修改密码</h3>
+          <button @click="closeChangePasswordModal" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        </div>
+        <div class="p-4">
+          <div class="mb-4">
+            <label for="oldPassword" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">旧密码</label>
+            <input
+              type="password"
+              id="oldPassword"
+              v-model="changePasswordForm.oldPassword"
+              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-700 dark:text-white"
+              placeholder="请输入旧密码"
+              :disabled="isChangePasswordLoading"
+            >
+          </div>
+          <div class="mb-4">
+            <label for="newPassword" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">新密码</label>
+            <input
+              type="password"
+              id="newPassword"
+              v-model="changePasswordForm.newPassword"
+              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-700 dark:text-white"
+              placeholder="请输入新密码"
+              :disabled="isChangePasswordLoading"
+            >
+          </div>
+          <div class="mb-4">
+            <label for="confirmPassword" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">确认新密码</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              v-model="changePasswordForm.confirmPassword"
+              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-700 dark:text-white"
+              placeholder="请再次输入新密码"
+              :disabled="isChangePasswordLoading"
+            >
+          </div>
+          <div v-if="changePasswordError" class="mb-4 p-3 bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 rounded-md">
+            {{ changePasswordError }}
+          </div>
+          <div v-if="changePasswordSuccess" class="mb-4 p-3 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-md">
+            {{ changePasswordSuccess }}
+          </div>
+          <div class="flex justify-end gap-3">
+            <button
+              type="button"
+              @click="closeChangePasswordModal"
+              class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+              :disabled="isChangePasswordLoading"
+            >
+              取消
+            </button>
+            <button
+              type="button"
+              @click="handleChangePassword"
+              class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+              :disabled="isChangePasswordLoading"
+            >
+              <span v-if="isChangePasswordLoading">修改中...</span>
+              <span v-else>确认修改</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -408,8 +498,9 @@ import AuthModal from './components/AuthModal.vue'
 const userStore = useUserStore()
 const bookmarkStore = useBookmarkStore()
 const bookmarksContainer = ref(null)
-const categoriesContainer = ref(null)
 const isUserMenuOpen = ref(false)
+const isCategoryMenuOpen = ref(false)
+const isTagMenuOpen = ref(false)
 
 // 分类模态框状态
 const isCategoryModalOpen = ref(false)
@@ -424,6 +515,17 @@ const currentBookmark = ref(null)
 // 认证模态框状态
 const isAuthModalOpen = ref(false)
 const isRegisterMode = ref(false)
+
+// 修改密码模态框状态
+const isChangePasswordModalOpen = ref(false)
+const changePasswordForm = ref({
+  oldPassword: '',
+  newPassword: '',
+  confirmPassword: ''
+})
+const isChangePasswordLoading = ref(false)
+const changePasswordError = ref('')
+const changePasswordSuccess = ref('')
 
 // 搜索状态
 const searchQuery = ref('')
@@ -964,8 +1066,69 @@ const goToBookmark = (url) => {
 
 // 打开修改密码模态框
 const openChangePasswordModal = () => {
-  // 这里可以实现修改密码的逻辑，暂时只做示例
-  alert('修改密码功能开发中...')
+  // 重置表单状态
+  changePasswordForm.value = {
+    oldPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  }
+  isChangePasswordLoading.value = false
+  changePasswordError.value = ''
+  changePasswordSuccess.value = ''
+  isChangePasswordModalOpen.value = true
+}
+
+// 关闭修改密码模态框
+const closeChangePasswordModal = () => {
+  isChangePasswordModalOpen.value = false
+}
+
+// 处理修改密码
+const handleChangePassword = async () => {
+  // 表单验证
+  if (!changePasswordForm.value.oldPassword || !changePasswordForm.value.newPassword || !changePasswordForm.value.confirmPassword) {
+    changePasswordError.value = '请填写所有必填字段'
+    return
+  }
+  
+  if (changePasswordForm.value.newPassword !== changePasswordForm.value.confirmPassword) {
+    changePasswordError.value = '两次输入的新密码不一致'
+    return
+  }
+  
+  isChangePasswordLoading.value = true
+  changePasswordError.value = ''
+  changePasswordSuccess.value = ''
+  
+  try {
+    const token = localStorage.getItem('token')
+    const response = await fetch('/api/users/change-password', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        old_password: changePasswordForm.value.oldPassword,
+        new_password: changePasswordForm.value.newPassword
+      })
+    })
+    
+    if (response.ok) {
+      changePasswordSuccess.value = '密码修改成功！'
+      // 3秒后关闭模态框
+      setTimeout(() => {
+        closeChangePasswordModal()
+      }, 3000)
+    } else {
+      const errorData = await response.json()
+      changePasswordError.value = errorData.error || '修改密码失败'
+    }
+  } catch (error) {
+    changePasswordError.value = '网络错误，请稍后重试'
+  } finally {
+    isChangePasswordLoading.value = false
+  }
 }
 
 
