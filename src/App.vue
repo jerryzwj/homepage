@@ -1,17 +1,17 @@
 <template>
-  <div class="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
+  <div class="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300" @click="closeAllMenus">
     <header class="bg-white dark:bg-gray-800 shadow-sm border-b border-transparent">
-      <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">收藏夹 Homepage</h1>
-        <div class="flex items-center gap-4">
+      <div class="container mx-auto px-4 py-4 flex flex-wrap justify-between items-center gap-4">
+        <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">收藏夹 Homepage</h1>
+        <div class="flex items-center gap-2 sm:gap-4 flex-wrap">
           <!-- 分类管理下拉菜单 -->
           <div class="relative">
-            <button @click="isCategoryMenuOpen = !isCategoryMenuOpen" class="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+            <button @click.stop="isCategoryMenuOpen = !isCategoryMenuOpen" class="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
               <span class="text-gray-700 dark:text-gray-300">分类管理</span>
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500 dark:text-gray-400"><path d="m6 9 6 6 6-6"></path></svg>
             </button>
             <!-- 分类菜单下拉 -->
-            <div v-if="isCategoryMenuOpen" class="absolute left-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-transparent z-50">
+            <div v-if="isCategoryMenuOpen" class="absolute left-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-transparent z-50" @click.stop>
               <div class="py-1">
                 <div class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700">
                   分类管理
@@ -53,7 +53,7 @@
                 <button 
                   v-if="userStore.isLoggedIn" 
                   class="w-full py-2 text-sm text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded mt-2 flex items-center justify-center gap-2"
-                  @click="openAddCategoryModal; isCategoryMenuOpen = false"
+                  @click="() => { openAddCategoryModal(); isCategoryMenuOpen = false; }"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                   添加分类
@@ -67,12 +67,12 @@
           
           <!-- 标签管理下拉菜单 -->
           <div class="relative">
-            <button @click="isTagMenuOpen = !isTagMenuOpen" class="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+            <button @click.stop="isTagMenuOpen = !isTagMenuOpen" class="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
               <span class="text-gray-700 dark:text-gray-300">标签管理</span>
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500 dark:text-gray-400"><path d="m6 9 6 6 6-6"></path></svg>
             </button>
             <!-- 标签菜单下拉 -->
-            <div v-if="isTagMenuOpen" class="absolute left-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-transparent z-50">
+            <div v-if="isTagMenuOpen" class="absolute left-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-transparent z-50" @click.stop>
               <div class="py-1">
                 <div class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700">
                   标签管理
@@ -98,13 +98,13 @@
           </button>
           <div v-if="userStore.isLoggedIn" class="flex items-center gap-2">
             <div class="relative">
-              <button @click="isUserMenuOpen = !isUserMenuOpen" class="flex items-center gap-2 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+              <button @click.stop="isUserMenuOpen = !isUserMenuOpen" class="flex items-center gap-2 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                 <img v-if="userStore.avatar" :src="userStore.avatar" alt="Avatar" class="w-8 h-8 rounded-full">
                 <span class="text-gray-700 dark:text-gray-300">{{ userStore.username || '用户' }}</span>
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500 dark:text-gray-400"><path d="m6 9 6 6 6-6"></path></svg>
               </button>
               <!-- 用户菜单下拉 -->
-              <div v-if="isUserMenuOpen" class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-transparent z-50">
+              <div v-if="isUserMenuOpen" class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-transparent z-50" @click.stop>
                 <div class="py-1">
                   <button @click="() => { openChangePasswordModal(); isUserMenuOpen = false; }" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
                     修改密码
@@ -179,106 +179,106 @@
             </div>
             <!-- 按分类分组显示卡片 -->
             <div v-if="bookmarkStore.categories.length > 0" class="space-y-8" ref="bookmarksContainer">
-              <div v-for="category in bookmarkStore.categories" :key="category.cate_id" class="space-y-3">
+              <div v-for="(category, index) in bookmarkStore.categories" :key="category.cate_id" class="space-y-4">
                 <!-- 分类标题 -->
-                <div class="flex items-center gap-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-500 dark:text-purple-400"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                  <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ category.cate_name }}</h3>
+                <div class="flex items-center gap-3 bg-gray-100 dark:bg-gray-800 pl-4 border-l-4 py-3 rounded-md mb-4" :class="getCategoryColorClass(index)">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" :class="getCategoryIconColorClass(index)"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                  <h3 class="text-xl font-bold text-gray-900 dark:text-white">{{ category.cate_name }}</h3>
                   <span class="text-sm text-gray-500 dark:text-gray-400">({{ bookmarkStore.bookmarks.filter(b => b.cate_id === category.cate_id).length }}个)</span>
                 </div>
                 <!-- 分类卡片组 -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                  <div v-for="bookmark in bookmarkStore.bookmarks.filter(b => b.cate_id === category.cate_id)" :key="bookmark.bookmark_id" class="bg-blue-100 dark:bg-purple-900/30 rounded-xl p-3 hover:shadow-md transition-shadow border border-transparent cursor-pointer"
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
+                  <div v-for="bookmark in bookmarkStore.bookmarks.filter(b => b.cate_id === category.cate_id)" :key="bookmark.bookmark_id" class="bg-white dark:bg-gray-800 rounded-xl p-4 hover:shadow-md hover:border-blue-300 dark:hover:border-purple-600 transition-all duration-300 shadow-sm border border-gray-200 dark:border-gray-700 cursor-pointer"
                        @click="goToBookmark(bookmark.url)">
-                    <div class="flex items-start justify-between mb-2">
-                      <div class="flex items-center gap-2 flex-1 min-w-0">
-                        <div class="w-6 h-6 rounded-full flex items-center justify-center bg-blue-200 dark:bg-purple-800 text-blue-700 dark:text-purple-200 text-xs font-medium">
+                    <div class="flex items-center justify-between mb-3">
+                      <div class="flex items-center gap-3 flex-1 min-w-0">
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium" :class="getCategoryCardIconClass(index)">
                           {{ bookmark.title.charAt(0).toUpperCase() }}
                         </div>
                         <h3 class="font-bold text-sm text-gray-900 dark:text-white truncate whitespace-nowrap overflow-hidden" v-html="highlightKeywords(bookmark.title, searchQuery)"></h3>
                       </div>
-                      <div v-if="userStore.isLoggedIn" class="flex items-center gap-1">
+                      <div v-if="userStore.isLoggedIn" class="flex items-center gap-2">
                         <button 
-                          class="p-1 hover:bg-blue-200 dark:hover:bg-purple-800 rounded"
+                          class="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
                           @click.stop="openEditBookmarkModal(bookmark)"
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500 dark:text-gray-400"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
                         </button>
                         <button 
-                          class="p-1 hover:bg-blue-200 dark:hover:bg-purple-800 rounded"
+                          class="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
                           @click.stop="deleteBookmark(bookmark.bookmark_id)"
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-500"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                         </button>
                       </div>
                     </div>
-                    <a :href="bookmark.url" target="_blank" rel="noopener noreferrer" class="text-sm text-gray-600 dark:text-gray-400 truncate block" v-html="highlightKeywords(bookmark.url, searchQuery)"></a>
+                    <a :href="bookmark.url" target="_blank" rel="noopener noreferrer" class="text-sm text-gray-600 dark:text-gray-400 truncate block mt-2" v-html="highlightKeywords(bookmark.url, searchQuery)"></a>
                   </div>
                 </div>
               </div>
               <!-- 未分类卡片 -->
-              <div v-if="bookmarkStore.bookmarks.filter(b => !b.cate_id || b.cate_id === '').length > 0" class="space-y-3">
-                <div class="flex items-center gap-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-500 dark:text-purple-400"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                  <h3 class="text-lg font-semibold text-gray-900 dark:text-white">未分类</h3>
+              <div v-if="bookmarkStore.bookmarks.filter(b => !b.cate_id || b.cate_id === '').length > 0" class="space-y-4">
+                <div class="flex items-center gap-3 bg-gray-100 dark:bg-gray-800 pl-4 border-l-4 border-gray-400 dark:border-gray-500 py-3 rounded-md mb-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500 dark:text-gray-400"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                  <h3 class="text-xl font-bold text-gray-900 dark:text-white">未分类</h3>
                   <span class="text-sm text-gray-500 dark:text-gray-400">({{ bookmarkStore.bookmarks.filter(b => !b.cate_id || b.cate_id === '').length }}个)</span>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                  <div v-for="bookmark in bookmarkStore.bookmarks.filter(b => !b.cate_id || b.cate_id === '')" :key="bookmark.bookmark_id" class="bg-blue-100 dark:bg-purple-900/30 rounded-xl p-3 hover:shadow-md transition-shadow border border-transparent cursor-pointer"
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
+                  <div v-for="bookmark in bookmarkStore.bookmarks.filter(b => !b.cate_id || b.cate_id === '')" :key="bookmark.bookmark_id" class="bg-white dark:bg-gray-800 rounded-xl p-4 hover:shadow-md hover:border-blue-300 dark:hover:border-purple-600 transition-all duration-300 shadow-sm border border-gray-200 dark:border-gray-700 cursor-pointer"
                        @click="goToBookmark(bookmark.url)">
-                    <div class="flex items-start justify-between mb-2">
-                      <div class="flex items-center gap-2 flex-1 min-w-0">
-                        <div class="w-6 h-6 rounded-full flex items-center justify-center bg-blue-200 dark:bg-purple-800 text-blue-700 dark:text-purple-200 text-xs font-medium">
+                    <div class="flex items-center justify-between mb-3">
+                      <div class="flex items-center gap-3 flex-1 min-w-0">
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium">
                           {{ bookmark.title.charAt(0).toUpperCase() }}
                         </div>
                         <h3 class="font-bold text-sm text-gray-900 dark:text-white truncate whitespace-nowrap overflow-hidden" v-html="highlightKeywords(bookmark.title, searchQuery)"></h3>
                       </div>
-                      <div v-if="userStore.isLoggedIn" class="flex items-center gap-1">
+                      <div v-if="userStore.isLoggedIn" class="flex items-center gap-2">
                         <button 
-                          class="p-1 hover:bg-blue-200 dark:hover:bg-purple-800 rounded"
+                          class="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
                           @click.stop="openEditBookmarkModal(bookmark)"
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500 dark:text-gray-400"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
                         </button>
                         <button 
-                          class="p-1 hover:bg-blue-200 dark:hover:bg-purple-800 rounded"
+                          class="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
                           @click.stop="deleteBookmark(bookmark.bookmark_id)"
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-500"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                         </button>
                       </div>
                     </div>
-                    <a :href="bookmark.url" target="_blank" rel="noopener noreferrer" class="text-sm text-gray-600 dark:text-gray-400 truncate block" v-html="highlightKeywords(bookmark.url, searchQuery)"></a>
+                    <a :href="bookmark.url" target="_blank" rel="noopener noreferrer" class="text-sm text-gray-600 dark:text-gray-400 truncate block mt-2" v-html="highlightKeywords(bookmark.url, searchQuery)"></a>
                   </div>
                 </div>
               </div>
             </div>
-            <div v-else-if="bookmarkStore.bookmarks.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4" ref="bookmarksContainer">
-              <div v-for="bookmark in bookmarkStore.bookmarks" :key="bookmark.bookmark_id" class="bg-blue-100 dark:bg-purple-900/30 rounded-xl p-3 hover:shadow-md transition-shadow border border-transparent cursor-pointer"
+            <div v-else-if="bookmarkStore.bookmarks.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4" ref="bookmarksContainer">
+              <div v-for="bookmark in bookmarkStore.bookmarks" :key="bookmark.bookmark_id" class="bg-white dark:bg-gray-800 rounded-xl p-4 hover:shadow-md hover:border-blue-300 dark:hover:border-purple-600 transition-all duration-300 shadow-sm border border-gray-200 dark:border-gray-700 cursor-pointer"
                    @click="goToBookmark(bookmark.url)">
-                <div class="flex items-start justify-between mb-2">
-                  <div class="flex items-center gap-2 flex-1 min-w-0">
-                    <div class="w-6 h-6 rounded-full flex items-center justify-center bg-blue-200 dark:bg-purple-800 text-blue-700 dark:text-purple-200 text-xs font-medium">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-3 flex-1 min-w-0">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center bg-blue-100 dark:bg-purple-900/50 text-blue-700 dark:text-purple-300 text-sm font-medium">
                       {{ bookmark.title.charAt(0).toUpperCase() }}
                     </div>
                     <h3 class="font-bold text-sm text-gray-900 dark:text-white truncate whitespace-nowrap overflow-hidden" v-html="highlightKeywords(bookmark.title, searchQuery)"></h3>
                   </div>
-                  <div v-if="userStore.isLoggedIn" class="flex items-center gap-1">
+                  <div v-if="userStore.isLoggedIn" class="flex items-center gap-2">
                     <button 
-                      class="p-1 hover:bg-blue-200 dark:hover:bg-purple-800 rounded"
+                      class="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
                       @click.stop="openEditBookmarkModal(bookmark)"
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500 dark:text-gray-400"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
                     </button>
                     <button 
-                      class="p-1 hover:bg-blue-200 dark:hover:bg-purple-800 rounded"
+                      class="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
                       @click.stop="deleteBookmark(bookmark.bookmark_id)"
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-500"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                     </button>
                   </div>
                 </div>
-                <a :href="bookmark.url" target="_blank" rel="noopener noreferrer" class="text-sm text-gray-600 dark:text-gray-400 truncate block" v-html="highlightKeywords(bookmark.url, searchQuery)"></a>
+                <a :href="bookmark.url" target="_blank" rel="noopener noreferrer" class="text-sm text-gray-600 dark:text-gray-400 truncate block mt-2" v-html="highlightKeywords(bookmark.url, searchQuery)"></a>
               </div>
             </div>
             <div v-if="bookmarkStore.bookmarks.length === 0" class="text-center py-12 text-gray-500 dark:text-gray-400">
@@ -1062,6 +1062,58 @@ const handleExport = async () => {
 // 跳转到书签链接
 const goToBookmark = (url) => {
   window.open(url, '_blank', 'noopener,noreferrer')
+}
+
+// 关闭所有菜单
+const closeAllMenus = () => {
+  isUserMenuOpen.value = false
+  isCategoryMenuOpen.value = false
+  isTagMenuOpen.value = false
+}
+
+// 为分类生成不同的颜色
+const getCategoryColorClass = (index) => {
+  const colors = [
+    'border-blue-500 dark:border-blue-400',
+    'border-purple-500 dark:border-purple-400',
+    'border-green-500 dark:border-green-400',
+    'border-yellow-500 dark:border-yellow-400',
+    'border-red-500 dark:border-red-400',
+    'border-pink-500 dark:border-pink-400',
+    'border-indigo-500 dark:border-indigo-400',
+    'border-teal-500 dark:border-teal-400'
+  ]
+  return colors[index % colors.length]
+}
+
+// 为分类图标生成不同的颜色
+const getCategoryIconColorClass = (index) => {
+  const colors = [
+    'text-blue-500 dark:text-blue-400',
+    'text-purple-500 dark:text-purple-400',
+    'text-green-500 dark:text-green-400',
+    'text-yellow-500 dark:text-yellow-400',
+    'text-red-500 dark:text-red-400',
+    'text-pink-500 dark:text-pink-400',
+    'text-indigo-500 dark:text-indigo-400',
+    'text-teal-500 dark:text-teal-400'
+  ]
+  return colors[index % colors.length]
+}
+
+// 为分类卡片图标生成不同的颜色
+const getCategoryCardIconClass = (index) => {
+  const colors = [
+    'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300',
+    'bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300',
+    'bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300',
+    'bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300',
+    'bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300',
+    'bg-pink-100 dark:bg-pink-900/50 text-pink-700 dark:text-pink-300',
+    'bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300',
+    'bg-teal-100 dark:bg-teal-900/50 text-teal-700 dark:text-teal-300'
+  ]
+  return colors[index % colors.length]
 }
 
 // 打开修改密码模态框
