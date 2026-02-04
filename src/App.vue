@@ -181,21 +181,17 @@
             <div v-if="bookmarkStore.categories.length > 0" class="space-y-8" ref="bookmarksContainer">
               <div v-for="(category, index) in bookmarkStore.categories" :key="category.cate_id" class="space-y-4">
                 <!-- 分类标题 -->
-                <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 bg-gray-100 dark:bg-gray-800 pl-4 border-l-4 py-3 rounded-md mb-4" :class="getCategoryColorClass(index)">
-                  <div class="flex items-center gap-3 flex-1 min-w-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" :class="getCategoryIconColorClass(index)"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                    <div class="flex-1 min-w-0">
-                      <div class="flex items-center gap-2">
-                        <h3 class="text-xl font-bold text-gray-900 dark:text-white">{{ category.cate_name }}</h3>
-                        <span class="text-sm text-gray-500 dark:text-gray-400">({{ bookmarkStore.bookmarks.filter(b => b.cate_id === category.cate_id).length }}个)</span>
-                      </div>
-                      <p v-if="category.cate_desc" class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ category.cate_desc }}</p>
-                    </div>
+                <div class="flex items-center gap-3 bg-gray-100 dark:bg-gray-800 pl-4 border-l-4 py-3 rounded-md mb-4" :class="getCategoryColorClass(index)">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" :class="getCategoryIconColorClass(index)"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                  <div class="flex items-center gap-2 flex-1 min-w-0">
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white">{{ category.cate_name }}</h3>
+                    <p v-if="category.cate_desc" class="text-xs text-gray-500 dark:text-gray-400">{{ category.cate_desc }}</p>
+                    <span class="text-sm text-gray-500 dark:text-gray-400">({{ bookmarkStore.bookmarks.filter(b => b.cate_id === category.cate_id).length }}个)</span>
                   </div>
                 </div>
                 <!-- 分类卡片组 -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
-                  <div v-for="bookmark in bookmarkStore.bookmarks.filter(b => b.cate_id === category.cate_id)" :key="bookmark.bookmark_id" class="bg-white dark:bg-gray-800 rounded-xl p-4 hover:shadow-md hover:border-blue-300 dark:hover:border-purple-600 transition-all duration-300 shadow-sm border border-gray-200 dark:border-gray-700 cursor-pointer"
+                  <div v-for="bookmark in bookmarkStore.bookmarks.filter(b => b.cate_id === category.cate_id)" :key="bookmark.bookmark_id" class="bg-gray-50 dark:bg-gray-700 rounded-xl p-4 hover:shadow-md hover:border-blue-300 dark:hover:border-purple-600 transition-all duration-300 shadow-sm border border-gray-200 dark:border-gray-600 cursor-pointer"
                        @click="goToBookmark(bookmark.url)">
                     <div class="flex items-center justify-between mb-3">
                       <div class="flex items-center gap-3 flex-1 min-w-0">
@@ -231,7 +227,7 @@
                   <span class="text-sm text-gray-500 dark:text-gray-400">({{ bookmarkStore.bookmarks.filter(b => !b.cate_id || b.cate_id === '').length }}个)</span>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
-                  <div v-for="bookmark in bookmarkStore.bookmarks.filter(b => !b.cate_id || b.cate_id === '')" :key="bookmark.bookmark_id" class="bg-white dark:bg-gray-800 rounded-xl p-4 hover:shadow-md hover:border-blue-300 dark:hover:border-purple-600 transition-all duration-300 shadow-sm border border-gray-200 dark:border-gray-700 cursor-pointer"
+                  <div v-for="bookmark in bookmarkStore.bookmarks.filter(b => !b.cate_id || b.cate_id === '')" :key="bookmark.bookmark_id" class="bg-gray-50 dark:bg-gray-700 rounded-xl p-4 hover:shadow-md hover:border-blue-300 dark:hover:border-purple-600 transition-all duration-300 shadow-sm border border-gray-200 dark:border-gray-600 cursor-pointer"
                        @click="goToBookmark(bookmark.url)">
                     <div class="flex items-center justify-between mb-3">
                       <div class="flex items-center gap-3 flex-1 min-w-0">
@@ -261,7 +257,7 @@
               </div>
             </div>
             <div v-else-if="bookmarkStore.bookmarks.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4" ref="bookmarksContainer">
-              <div v-for="bookmark in bookmarkStore.bookmarks" :key="bookmark.bookmark_id" class="bg-white dark:bg-gray-800 rounded-xl p-4 hover:shadow-md hover:border-blue-300 dark:hover:border-purple-600 transition-all duration-300 shadow-sm border border-gray-200 dark:border-gray-700 cursor-pointer"
+              <div v-for="bookmark in bookmarkStore.bookmarks" :key="bookmark.bookmark_id" class="bg-gray-50 dark:bg-gray-700 rounded-xl p-4 hover:shadow-md hover:border-blue-300 dark:hover:border-purple-600 transition-all duration-300 shadow-sm border border-gray-200 dark:border-gray-600 cursor-pointer"
                    @click="goToBookmark(bookmark.url)">
                 <div class="flex items-center justify-between mb-3">
                   <div class="flex items-center gap-3 flex-1 min-w-0">
