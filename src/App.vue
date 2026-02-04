@@ -18,17 +18,17 @@
               <!-- 用户菜单下拉 -->
               <div v-if="isUserMenuOpen" class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-700 z-50">
                 <div class="py-1">
-                  <button @click="openChangePasswordModal; isUserMenuOpen = false" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
+                  <button @click="() => { openChangePasswordModal(); isUserMenuOpen = false; }" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
                     修改密码
                   </button>
-                  <button @click="openImportModal; isUserMenuOpen = false" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
+                  <button @click="() => { openImportModal(); isUserMenuOpen = false; }" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
                     导入收藏
                   </button>
-                  <button @click="openExportModal; isUserMenuOpen = false" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
+                  <button @click="() => { openExportModal(); isUserMenuOpen = false; }" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
                     导出收藏
                   </button>
                   <div class="border-t border-gray-200 dark:border-gray-700 mt-1 pt-1">
-                    <button @click="userStore.logout; isUserMenuOpen = false" class="block px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
+                    <button @click="() => { userStore.logout(); isUserMenuOpen = false; }" class="block px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
                       登出
                     </button>
                   </div>
