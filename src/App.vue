@@ -215,7 +215,7 @@
                         </button>
                       </div>
                     </div>
-                    <a :href="bookmark.url" target="_blank" rel="noopener noreferrer" class="text-sm text-gray-600 dark:text-gray-400 truncate block mt-2" v-html="highlightKeywords(bookmark.url, searchQuery)"></a>
+                    <a :href="bookmark.url" target="_blank" rel="noopener noreferrer" class="text-sm text-gray-600 dark:text-gray-400 truncate block mt-2" v-html="highlightKeywords(bookmark.url, searchQuery)" @click.stop></a>
                   </div>
                 </div>
               </div>
@@ -251,7 +251,7 @@
                         </button>
                       </div>
                     </div>
-                    <a :href="bookmark.url" target="_blank" rel="noopener noreferrer" class="text-sm text-gray-600 dark:text-gray-400 truncate block mt-2" v-html="highlightKeywords(bookmark.url, searchQuery)"></a>
+                    <a :href="bookmark.url" target="_blank" rel="noopener noreferrer" class="text-sm text-gray-600 dark:text-gray-400 truncate block mt-2" v-html="highlightKeywords(bookmark.url, searchQuery)" @click.stop></a>
                   </div>
                 </div>
               </div>
@@ -281,7 +281,7 @@
                     </button>
                   </div>
                 </div>
-                <a :href="bookmark.url" target="_blank" rel="noopener noreferrer" class="text-sm text-gray-600 dark:text-gray-400 truncate block mt-2" v-html="highlightKeywords(bookmark.url, searchQuery)"></a>
+                <a :href="bookmark.url" target="_blank" rel="noopener noreferrer" class="text-sm text-gray-600 dark:text-gray-400 truncate block mt-2" v-html="highlightKeywords(bookmark.url, searchQuery)" @click.stop></a>
               </div>
             </div>
             <div v-if="bookmarkStore.bookmarks.length === 0" class="text-center py-12 text-gray-500 dark:text-gray-400">
