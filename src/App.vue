@@ -9,11 +9,32 @@
             <svg v-else xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-300 dark:text-gray-600"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
           </button>
           <div v-if="userStore.isLoggedIn" class="flex items-center gap-2">
-            <img v-if="userStore.avatar" :src="userStore.avatar" alt="Avatar" class="w-8 h-8 rounded-full">
-            <span class="text-gray-700 dark:text-gray-300">{{ userStore.username || '用户' }}</span>
-            <button @click="userStore.logout" class="px-3 py-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
-              登出
-            </button>
+            <div class="relative">
+              <button @click="isUserMenuOpen = !isUserMenuOpen" class="flex items-center gap-2 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                <img v-if="userStore.avatar" :src="userStore.avatar" alt="Avatar" class="w-8 h-8 rounded-full">
+                <span class="text-gray-700 dark:text-gray-300">{{ userStore.username || '用户' }}</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500 dark:text-gray-400"><path d="m6 9 6 6 6-6"></path></svg>
+              </button>
+              <!-- 用户菜单下拉 -->
+              <div v-if="isUserMenuOpen" class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-700 z-50">
+                <div class="py-1">
+                  <button @click="openChangePasswordModal; isUserMenuOpen = false" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
+                    修改密码
+                  </button>
+                  <button @click="openImportModal; isUserMenuOpen = false" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
+                    导入收藏
+                  </button>
+                  <button @click="openExportModal; isUserMenuOpen = false" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
+                    导出收藏
+                  </button>
+                  <div class="border-t border-gray-200 dark:border-gray-700 mt-1 pt-1">
+                    <button @click="userStore.logout; isUserMenuOpen = false" class="block px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left">
+                      登出
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
           <button v-else @click="openLoginModal" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
               登录
@@ -134,20 +155,6 @@
                     @click="openAddBookmarkModal"
                   >
                     添加收藏
-                  </button>
-                  <button 
-                    v-if="userStore.isLoggedIn" 
-                    class="flex-1 sm:flex-none px-3 py-2 bg-purple-600 text-white rounded-md text-sm hover:bg-purple-700 transition-colors"
-                    @click="openImportModal"
-                  >
-                    导入收藏
-                  </button>
-                  <button 
-                    v-if="userStore.isLoggedIn" 
-                    class="flex-1 sm:flex-none px-3 py-2 bg-indigo-600 text-white rounded-md text-sm hover:bg-indigo-700 transition-colors"
-                    @click="openExportModal"
-                  >
-                    导出收藏
                   </button>
                 </div>
               </div>
@@ -392,7 +399,6 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
-import Sortable from 'sortablejs'
 import { useUserStore } from './stores/user'
 import { useBookmarkStore } from './stores/bookmark'
 import CategoryModal from './components/CategoryModal.vue'
@@ -403,6 +409,7 @@ const userStore = useUserStore()
 const bookmarkStore = useBookmarkStore()
 const bookmarksContainer = ref(null)
 const categoriesContainer = ref(null)
+const isUserMenuOpen = ref(false)
 
 // 分类模态框状态
 const isCategoryModalOpen = ref(false)
@@ -457,34 +464,6 @@ onMounted(async () => {
   // 如果已登录，加载分类和收藏数据
   if (userStore.isLoggedIn) {
     loadData()
-  }
-  
-  // 初始化收藏卡片拖拽排序
-  if (bookmarksContainer.value) {
-    new Sortable(bookmarksContainer.value, {
-      animation: 150,
-      ghostClass: 'bg-gray-200 dark:bg-gray-600',
-      onEnd: function(evt) {
-        const movedBookmark = bookmarkStore.bookmarks.splice(evt.oldIndex, 1)[0]
-        bookmarkStore.bookmarks.splice(evt.newIndex, 0, movedBookmark)
-        // 更新排序到服务器
-        bookmarkStore.updateBookmarkOrder(bookmarkStore.bookmarks)
-      }
-    })
-  }
-  
-  // 初始化分类拖拽排序
-  if (categoriesContainer.value) {
-    new Sortable(categoriesContainer.value, {
-      animation: 150,
-      ghostClass: 'bg-gray-200 dark:bg-gray-600',
-      onEnd: function(evt) {
-        const movedCategory = bookmarkStore.categories.splice(evt.oldIndex, 1)[0]
-        bookmarkStore.categories.splice(evt.newIndex, 0, movedCategory)
-        // 更新排序到服务器
-        bookmarkStore.updateCategoryOrder(bookmarkStore.categories)
-      }
-    })
   }
 })
 
@@ -976,6 +955,17 @@ const handleExport = async () => {
   } catch (error) {
     exportError.value = '导出失败: ' + error.message
   }
+}
+
+// 跳转到书签链接
+const goToBookmark = (url) => {
+  window.open(url, '_blank', 'noopener,noreferrer')
+}
+
+// 打开修改密码模态框
+const openChangePasswordModal = () => {
+  // 这里可以实现修改密码的逻辑，暂时只做示例
+  alert('修改密码功能开发中...')
 }
 
 
