@@ -191,7 +191,7 @@
                 </div>
                 <!-- 分类卡片组 -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
-                  <div v-for="bookmark in bookmarkStore.bookmarks.filter(b => b.cate_id === category.cate_id)" :key="bookmark.bookmark_id" class="bg-[#99CCFF] dark:bg-black rounded-xl p-4 hover:shadow-md hover:border-blue-300 dark:hover:border-purple-600 transition-all duration-300 shadow-sm border border-transparent cursor-pointer"
+                  <div v-for="bookmark in bookmarkStore.bookmarks.filter(b => b.cate_id === category.cate_id)" :key="bookmark.bookmark_id" class="bg-[#99CCFF]/90 dark:bg-black/90 rounded-xl p-4 hover:shadow-md hover:border-blue-300 dark:hover:border-purple-600 transition-all duration-300 shadow-sm border border-transparent cursor-pointer"
                        @click="goToBookmark(bookmark.url)">
                     <div class="flex items-center justify-between mb-3">
                       <div class="flex items-center gap-3 flex-1 min-w-0">
@@ -227,7 +227,7 @@
                   <span class="text-sm text-gray-500 dark:text-gray-400">({{ bookmarkStore.bookmarks.filter(b => !b.cate_id || b.cate_id === '').length }}个)</span>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
-                  <div v-for="bookmark in bookmarkStore.bookmarks.filter(b => !b.cate_id || b.cate_id === '')" :key="bookmark.bookmark_id" class="bg-[#99CCFF] dark:bg-black rounded-xl p-4 hover:shadow-md hover:border-blue-300 dark:hover:border-purple-600 transition-all duration-300 shadow-sm border border-transparent cursor-pointer"
+                  <div v-for="bookmark in bookmarkStore.bookmarks.filter(b => !b.cate_id || b.cate_id === '')" :key="bookmark.bookmark_id" class="bg-[#99CCFF]/90 dark:bg-black/90 rounded-xl p-4 hover:shadow-md hover:border-blue-300 dark:hover:border-purple-600 transition-all duration-300 shadow-sm border border-transparent cursor-pointer"
                        @click="goToBookmark(bookmark.url)">
                     <div class="flex items-center justify-between mb-3">
                       <div class="flex items-center gap-3 flex-1 min-w-0">
@@ -257,7 +257,7 @@
               </div>
             </div>
             <div v-else-if="bookmarkStore.bookmarks.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4" ref="bookmarksContainer">
-              <div v-for="bookmark in bookmarkStore.bookmarks" :key="bookmark.bookmark_id" class="bg-[#99CCFF] dark:bg-black rounded-xl p-4 hover:shadow-md hover:border-blue-300 dark:hover:border-purple-600 transition-all duration-300 shadow-sm border border-transparent cursor-pointer"
+              <div v-for="bookmark in bookmarkStore.bookmarks" :key="bookmark.bookmark_id" class="bg-[#99CCFF]/90 dark:bg-black/90 rounded-xl p-4 hover:shadow-md hover:border-blue-300 dark:hover:border-purple-600 transition-all duration-300 shadow-sm border border-transparent cursor-pointer"
                    @click="goToBookmark(bookmark.url)">
                 <div class="flex items-center justify-between mb-3">
                   <div class="flex items-center gap-3 flex-1 min-w-0">
