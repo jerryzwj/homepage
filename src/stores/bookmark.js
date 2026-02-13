@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { useUserStore } from './user'
 
 export const useBookmarkStore = defineStore('bookmark', {
   state: () => ({
@@ -18,6 +19,14 @@ export const useBookmarkStore = defineStore('bookmark', {
   },
   
   actions: {
+    // 处理401错误，清除登录状态
+    handle401Error() {
+      const userStore = useUserStore()
+      if (userStore.isLoggedIn) {
+        userStore.logout()
+      }
+    },
+    
     async fetchCategories() {
       this.isLoading = true
       try {
@@ -32,6 +41,9 @@ export const useBookmarkStore = defineStore('bookmark', {
         
         if (response.ok) {
           this.categories = await response.json()
+        } else if (response.status === 401) {
+          // 处理401错误，清除登录状态
+          this.handle401Error()
         }
       } catch (error) {
         console.error('获取分类失败:', error)
@@ -60,6 +72,9 @@ export const useBookmarkStore = defineStore('bookmark', {
         if (response.ok) {
           this.bookmarks = await response.json()
           this.currentCategory = cateId
+        } else if (response.status === 401) {
+          // 处理401错误，清除登录状态
+          this.handle401Error()
         }
       } catch (error) {
         console.error('获取收藏失败:', error)
@@ -84,6 +99,10 @@ export const useBookmarkStore = defineStore('bookmark', {
         if (response.ok) {
           await this.fetchCategories()
           return true
+        } else if (response.status === 401) {
+          // 处理401错误，清除登录状态
+          this.handle401Error()
+          return false
         }
         return false
       } catch (error) {
@@ -108,6 +127,10 @@ export const useBookmarkStore = defineStore('bookmark', {
         if (response.ok) {
           await this.fetchCategories()
           return true
+        } else if (response.status === 401) {
+          // 处理401错误，清除登录状态
+          this.handle401Error()
+          return false
         }
         return false
       } catch (error) {
@@ -131,6 +154,10 @@ export const useBookmarkStore = defineStore('bookmark', {
           await this.fetchCategories()
           await this.fetchBookmarks()
           return true
+        } else if (response.status === 401) {
+          // 处理401错误，清除登录状态
+          this.handle401Error()
+          return false
         }
         return false
       } catch (error) {
@@ -155,6 +182,10 @@ export const useBookmarkStore = defineStore('bookmark', {
         if (response.ok) {
           await this.fetchBookmarks(this.currentCategory)
           return true
+        } else if (response.status === 401) {
+          // 处理401错误，清除登录状态
+          this.handle401Error()
+          return false
         }
         return false
       } catch (error) {
@@ -179,6 +210,10 @@ export const useBookmarkStore = defineStore('bookmark', {
         if (response.ok) {
           await this.fetchBookmarks(this.currentCategory)
           return true
+        } else if (response.status === 401) {
+          // 处理401错误，清除登录状态
+          this.handle401Error()
+          return false
         }
         return false
       } catch (error) {
@@ -201,6 +236,10 @@ export const useBookmarkStore = defineStore('bookmark', {
         if (response.ok) {
           await this.fetchBookmarks(this.currentCategory)
           return true
+        } else if (response.status === 401) {
+          // 处理401错误，清除登录状态
+          this.handle401Error()
+          return false
         }
         return false
       } catch (error) {
@@ -223,6 +262,10 @@ export const useBookmarkStore = defineStore('bookmark', {
         if (response.ok) {
           this.bookmarks = await response.json()
           return true
+        } else if (response.status === 401) {
+          // 处理401错误，清除登录状态
+          this.handle401Error()
+          return false
         }
         return false
       } catch (error) {
