@@ -200,3 +200,16 @@ a:hover, a:focus {
   opacity: 1;
   transform: translateY(0);
 }
+
+/* 编辑/删除按钮（默认隐藏，卡片悬停显示，与刷新按钮行为一致） */
+.icon-edit-btn,
+.icon-delete-btn {
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.2s ease, transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+.group-card:hover .icon-edit-btn,
+.group-card:hover .icon-delete-btn {
+  opacity: 1;
+  transform: translateY(0);
+}
