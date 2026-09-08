@@ -124,17 +124,21 @@ a:hover, a:focus {
   box-shadow: 0 8px 28px -12px rgba(0, 0, 0, 0.5);
 }
 
-/* 分类标题条毛玻璃 */
+/* 分类标题条毛玻璃（左边框宽度与颜色交给 Tailwind 类控制，这里只设置其余三边的淡边框） */
 .glass-section {
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(79, 70, 229, 0.14);
+  border-top: 1px solid rgba(79, 70, 229, 0.14);
+  border-right: 1px solid rgba(79, 70, 229, 0.14);
+  border-bottom: 1px solid rgba(79, 70, 229, 0.14);
   box-shadow: 0 2px 10px -6px rgba(31, 45, 120, 0.18);
 }
 .dark .glass-section {
   background: rgba(19, 28, 56, 0.72);
-  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-top: 1px solid rgba(148, 163, 184, 0.18);
+  border-right: 1px solid rgba(148, 163, 184, 0.18);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.18);
   box-shadow: 0 2px 10px -6px rgba(0, 0, 0, 0.4);
 }
 
