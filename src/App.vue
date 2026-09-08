@@ -204,7 +204,7 @@
                         <BookmarkIcon :bookmark="bookmark" :color-class="getCategoryCardIconClass(index)" :refresh-version="iconVersions[bookmark.bookmark_id] || 0" />
                         <h3 class="font-bold text-sm text-gray-900 dark:text-white flex-1 min-w-0 truncate" v-html="highlightKeywords(bookmark.title, searchQuery)"></h3>
                       </div>
-                      <div v-if="userStore.isLoggedIn" class="flex items-center gap-1.5">
+                      <div v-if="userStore.isLoggedIn" class="icon-btn-group flex items-center gap-1.5">
                         <button 
                           class="icon-refresh-btn icon-action-btn"
                           title="刷新图标"
@@ -247,7 +247,7 @@
                         <BookmarkIcon :bookmark="bookmark" color-class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300" :refresh-version="iconVersions[bookmark.bookmark_id] || 0" />
                         <h3 class="font-bold text-sm text-gray-900 dark:text-white flex-1 min-w-0 truncate" v-html="highlightKeywords(bookmark.title, searchQuery)"></h3>
                       </div>
-                      <div v-if="userStore.isLoggedIn" class="flex items-center gap-1.5">
+                      <div v-if="userStore.isLoggedIn" class="icon-btn-group flex items-center gap-1.5">
                         <button 
                           class="icon-refresh-btn icon-action-btn"
                           title="刷新图标"
@@ -284,7 +284,7 @@
                     <BookmarkIcon :bookmark="bookmark" color-class="bg-blue-100 dark:bg-purple-900/50 text-blue-700 dark:text-purple-300" :refresh-version="iconVersions[bookmark.bookmark_id] || 0" />
                     <h3 class="font-bold text-sm text-gray-900 dark:text-white flex-1 min-w-0 truncate" v-html="highlightKeywords(bookmark.title, searchQuery)"></h3>
                   </div>
-                  <div v-if="userStore.isLoggedIn" class="flex items-center gap-1.5">
+                  <div v-if="userStore.isLoggedIn" class="icon-btn-group flex items-center gap-1.5">
                     <button 
                       class="icon-refresh-btn icon-action-btn"
                       title="刷新图标"
