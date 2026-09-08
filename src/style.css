@@ -43,3 +43,106 @@ a:hover, a:focus {
   background-image: none !important;
   background-color: transparent !important;
 }
+
+/* ========== A主题：渐变背景 + 毛玻璃 ========== */
+
+/* 整页渐变背景（浅色：淡蓝紫；深色：深蓝紫） */
+.theme-gradient-bg {
+  background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 28%, #ecfeff 62%, #eef2ff 100%);
+  background-attachment: fixed;
+}
+.dark .theme-gradient-bg {
+  background: linear-gradient(135deg, #0b1120 0%, #141b3d 45%, #0c1a30 100%);
+  background-attachment: fixed;
+}
+
+/* 毛玻璃导航栏 */
+.glass-nav {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border-bottom: 1px solid rgba(99, 102, 241, 0.12);
+}
+.dark .glass-nav {
+  background: rgba(13, 20, 42, 0.68);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+}
+
+/* 毛玻璃卡片 */
+.glass-card {
+  background: rgba(255, 255, 255, 0.66);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  box-shadow: 0 1px 2px rgba(31, 45, 120, 0.06), 0 10px 28px -14px rgba(99, 102, 241, 0.22);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+}
+.dark .glass-card {
+  background: rgba(19, 28, 56, 0.62);
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 10px 28px -14px rgba(99, 102, 241, 0.3);
+}
+
+/* 收藏卡片悬停：上浮 + 光晕 */
+.glass-card-hover:hover {
+  transform: translateY(-4px);
+  border-color: rgba(99, 102, 241, 0.55);
+  box-shadow: 0 2px 4px rgba(31, 45, 120, 0.08), 0 16px 36px -12px rgba(99, 102, 241, 0.4);
+}
+.dark .glass-card-hover:hover {
+  border-color: rgba(129, 140, 248, 0.5);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4), 0 16px 36px -12px rgba(129, 140, 248, 0.35);
+}
+
+/* 渐变文字 Logo */
+.gradient-text {
+  background: linear-gradient(90deg, #4f46e5 0%, #7c3aed 45%, #2563eb 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+.dark .gradient-text {
+  background: linear-gradient(90deg, #818cf8 0%, #c084fc 45%, #60a5fa 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* 毛玻璃面板（下拉菜单） */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid rgba(99, 102, 241, 0.12);
+  box-shadow: 0 8px 28px -12px rgba(31, 45, 120, 0.28);
+}
+.dark .glass-panel {
+  background: rgba(15, 23, 46, 0.88);
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  box-shadow: 0 8px 28px -12px rgba(0, 0, 0, 0.5);
+}
+
+/* 分类标题条毛玻璃 */
+.glass-section {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+.dark .glass-section {
+  background: rgba(19, 28, 56, 0.55);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+/* 图标刷新按钮（默认隐藏，卡片悬停显示） */
+.icon-refresh-btn {
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.2s ease, transform 0.2s ease, background 0.2s ease;
+}
+.group-card:hover .icon-refresh-btn {
+  opacity: 1;
+  transform: translateY(0);
+}
