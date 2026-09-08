@@ -234,7 +234,7 @@ const fetchUrlInfo = async () => {
       // 对于局域网IP，直接使用备用方案
       form.title = hostname
       form.description = `来自局域网 ${hostname} 的链接`
-      form.icon = `https://www.google.com/s2/favicons?domain=${hostname}&sz=64`
+      form.icon = `https://icons.duckduckgo.com/ip3/${hostname}.ico`
     } else {
       // 调用后端API来抓取网页信息
       const response = await fetch('/api/fetch-url', {
@@ -256,7 +256,7 @@ const fetchUrlInfo = async () => {
         // 直接替换，无论输入框是否已有内容
         form.title = hostname
         form.description = `来自 ${hostname} 的链接`
-        form.icon = `https://www.google.com/s2/favicons?domain=${hostname}&sz=64`
+        form.icon = `https://icons.duckduckgo.com/ip3/${hostname}.ico`
       }
     }
   } catch (error) {
@@ -266,7 +266,7 @@ const fetchUrlInfo = async () => {
     // 直接替换，无论输入框是否已有内容
     form.title = hostname
     form.description = `来自 ${hostname} 的链接`
-    form.icon = `https://www.google.com/s2/favicons?domain=${hostname}&sz=64`
+    form.icon = `https://icons.duckduckgo.com/ip3/${hostname}.ico`
   } finally {
     isFetching.value = false
   }
