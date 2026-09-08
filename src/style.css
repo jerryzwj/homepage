@@ -190,6 +190,18 @@ a:hover, a:focus {
   color: #818cf8;
 }
 
+/* 卡片操作按钮组（默认收起不占位，卡片悬停时平滑展开；让标题在按钮隐藏时占满整行，不再被按钮占位压缩） */
+.icon-btn-group {
+  max-width: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-width 0.22s ease, opacity 0.22s ease;
+}
+.group-card:hover .icon-btn-group {
+  max-width: 104px;
+  opacity: 1;
+}
+
 /* 图标刷新按钮（默认隐藏，卡片悬停显示） */
 .icon-refresh-btn {
   opacity: 0;
