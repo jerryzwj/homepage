@@ -202,7 +202,7 @@
                     <div class="flex items-center justify-between mb-3">
                       <div class="flex items-center gap-3 flex-1 min-w-0">
                         <BookmarkIcon :bookmark="bookmark" :color-class="getCategoryCardIconClass(index)" :refresh-version="iconVersions[bookmark.bookmark_id] || 0" />
-                        <h3 class="font-bold text-sm text-gray-900 dark:text-white truncate whitespace-nowrap overflow-hidden flex-1" v-html="highlightKeywords(bookmark.title, searchQuery)"></h3>
+                        <h3 class="font-bold text-sm text-gray-900 dark:text-white flex-1 min-w-0 truncate" v-html="highlightKeywords(bookmark.title, searchQuery)"></h3>
                       </div>
                       <div v-if="userStore.isLoggedIn" class="flex items-center gap-1.5">
                         <button 
@@ -245,7 +245,7 @@
                     <div class="flex items-center justify-between mb-3">
                       <div class="flex items-center gap-3 flex-1 min-w-0">
                         <BookmarkIcon :bookmark="bookmark" color-class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300" :refresh-version="iconVersions[bookmark.bookmark_id] || 0" />
-                        <h3 class="font-bold text-sm text-gray-900 dark:text-white truncate whitespace-nowrap overflow-hidden flex-1" v-html="highlightKeywords(bookmark.title, searchQuery)"></h3>
+                        <h3 class="font-bold text-sm text-gray-900 dark:text-white flex-1 min-w-0 truncate" v-html="highlightKeywords(bookmark.title, searchQuery)"></h3>
                       </div>
                       <div v-if="userStore.isLoggedIn" class="flex items-center gap-1.5">
                         <button 
@@ -282,7 +282,7 @@
                 <div class="flex items-center justify-between mb-3">
                   <div class="flex items-center gap-3 flex-1 min-w-0">
                     <BookmarkIcon :bookmark="bookmark" color-class="bg-blue-100 dark:bg-purple-900/50 text-blue-700 dark:text-purple-300" :refresh-version="iconVersions[bookmark.bookmark_id] || 0" />
-                    <h3 class="font-bold text-sm text-gray-900 dark:text-white truncate whitespace-nowrap overflow-hidden flex-1" v-html="highlightKeywords(bookmark.title, searchQuery)"></h3>
+                    <h3 class="font-bold text-sm text-gray-900 dark:text-white flex-1 min-w-0 truncate" v-html="highlightKeywords(bookmark.title, searchQuery)"></h3>
                   </div>
                   <div v-if="userStore.isLoggedIn" class="flex items-center gap-1.5">
                     <button 
