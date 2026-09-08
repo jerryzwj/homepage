@@ -186,7 +186,7 @@
             <div v-if="bookmarkStore.categories.length > 0" class="space-y-8" ref="bookmarksContainer">
               <div v-for="(category, index) in bookmarkStore.categories" :key="category.cate_id" class="space-y-4">
                 <!-- 分类标题 -->
-                <div class="flex items-center gap-3 glass-section pl-4 border-l-4 py-3 rounded-xl mb-4" :class="getCategoryColorClass(index)">
+                <div class="flex items-center gap-3 glass-section pl-4 border-l-2 py-3 rounded-xl mb-4" :class="getCategoryColorClass(index)">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" :class="getCategoryIconColorClass(index)"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
                   <div class="flex items-center gap-2 flex-1 min-w-0">
                     <h3 class="text-xl font-bold text-gray-900 dark:text-white">{{ category.cate_name }}</h3>
@@ -233,7 +233,7 @@
               </div>
               <!-- 未分类卡片 -->
               <div v-if="bookmarkStore.bookmarks.filter(b => !b.cate_id || b.cate_id === '').length > 0" class="space-y-4">
-                <div class="flex items-center gap-3 glass-section pl-4 border-l-4 border-gray-400 dark:border-gray-500 py-3 rounded-xl mb-4">
+                <div class="flex items-center gap-3 glass-section pl-4 border-l-2 border-l-gray-400/50 dark:border-l-gray-500/50 py-3 rounded-xl mb-4">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500 dark:text-gray-400"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
                   <h3 class="text-xl font-bold text-gray-900 dark:text-white">未分类</h3>
                   <span class="text-sm text-gray-500 dark:text-gray-400">({{ bookmarkStore.bookmarks.filter(b => !b.cate_id || b.cate_id === '').length }}个)</span>
@@ -515,7 +515,6 @@
     </div>
   </div>
 </template>
-
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import { useUserStore } from './stores/user'
@@ -524,28 +523,23 @@ import CategoryModal from './components/CategoryModal.vue'
 import BookmarkModal from './components/BookmarkModal.vue'
 import AuthModal from './components/AuthModal.vue'
 import BookmarkIcon from './components/BookmarkIcon.vue'
-
 const userStore = useUserStore()
 const bookmarkStore = useBookmarkStore()
 const bookmarksContainer = ref(null)
 const isUserMenuOpen = ref(false)
 const isCategoryMenuOpen = ref(false)
 const isTagMenuOpen = ref(false)
-
 // 分类模态框状态
 const isCategoryModalOpen = ref(false)
 const isEditingCategory = ref(false)
 const currentCategory = ref(null)
-
 // 收藏模态框状态
 const isBookmarkModalOpen = ref(false)
 const isEditingBookmark = ref(false)
 const currentBookmark = ref(null)
-
 // 认证模态框状态
 const isAuthModalOpen = ref(false)
 const isRegisterMode = ref(false)
-
 // 修改密码模态框状态
 const isChangePasswordModalOpen = ref(false)
 const changePasswordForm = ref({
@@ -556,16 +550,12 @@ const changePasswordForm = ref({
 const isChangePasswordLoading = ref(false)
 const changePasswordError = ref('')
 const changePasswordSuccess = ref('')
-
 // 搜索状态
 const searchQuery = ref('')
-
 // 图标刷新版本号（key: bookmark_id，值递增触发图标组件重载）
 const iconVersions = ref({})
-
 // 标签相关状态
 const selectedTag = ref(null)
-
 // 计算所有标签
 const allTags = computed(() => {
   const tagsSet = new Set()
@@ -581,17 +571,14 @@ const allTags = computed(() => {
   })
   return Array.from(tagsSet)
 })
-
 // 导入模态框状态
 const isImportModalOpen = ref(false)
 const importFile = ref(null)
 const importLoading = ref(false)
 const importError = ref('')
-
 // 导出模态框状态
 const isExportModalOpen = ref(false)
 const exportError = ref('')
-
 onMounted(async () => {
   // 初始化用户状态
   userStore.init()
@@ -601,7 +588,6 @@ onMounted(async () => {
     loadData()
   }
 })
-
 // 监听登录状态变化
 watch(() => userStore.isLoggedIn, (isLoggedIn) => {
   if (isLoggedIn) {
@@ -613,37 +599,31 @@ watch(() => userStore.isLoggedIn, (isLoggedIn) => {
     bookmarkStore.currentCategory = null
   }
 })
-
 // 加载数据
 const loadData = async () => {
   await bookmarkStore.fetchCategories()
   await bookmarkStore.fetchBookmarks()
 }
-
 // 切换分类
 const switchCategory = async (cateId) => {
   await bookmarkStore.fetchBookmarks(cateId)
 }
-
 // 打开添加分类模态框
 const openAddCategoryModal = () => {
   isEditingCategory.value = false
   currentCategory.value = null
   isCategoryModalOpen.value = true
 }
-
 // 打开编辑分类模态框
 const openEditCategoryModal = (category) => {
   isEditingCategory.value = true
   currentCategory.value = category
   isCategoryModalOpen.value = true
 }
-
 // 关闭分类模态框
 const closeCategoryModal = () => {
   isCategoryModalOpen.value = false
 }
-
 // 保存分类
 const saveCategory = async (categoryData) => {
   try {
@@ -663,7 +643,6 @@ const saveCategory = async (categoryData) => {
     console.error('保存分类失败:', error)
   }
 }
-
 // 删除分类
 const deleteCategory = async (cateId) => {
   if (confirm('确定要删除这个分类吗？分类下的所有收藏也会被删除。')) {
@@ -680,7 +659,6 @@ const deleteCategory = async (cateId) => {
     }
   }
 }
-
 // 打开添加收藏模态框
 const openAddBookmarkModal = () => {
   // 重置表单状态
@@ -689,7 +667,6 @@ const openAddBookmarkModal = () => {
   // 打开模态框
   isBookmarkModalOpen.value = true
 }
-
 // 打开编辑收藏模态框
 const openEditBookmarkModal = (bookmark) => {
   // 设置编辑状态
@@ -699,12 +676,10 @@ const openEditBookmarkModal = (bookmark) => {
   // 打开模态框
   isBookmarkModalOpen.value = true
 }
-
 // 关闭收藏模态框
 const closeBookmarkModal = () => {
   isBookmarkModalOpen.value = false
 }
-
 // 保存收藏
 const saveBookmark = async (bookmarkData) => {
   try {
@@ -724,7 +699,6 @@ const saveBookmark = async (bookmarkData) => {
     console.error('保存收藏失败:', error)
   }
 }
-
 // 删除收藏
 const deleteBookmark = async (bookmarkId) => {
   if (confirm('确定要删除这个收藏吗？')) {
@@ -738,29 +712,24 @@ const deleteBookmark = async (bookmarkId) => {
     }
   }
 }
-
 // 打开登录模态框
 const openLoginModal = () => {
   isRegisterMode.value = false
   isAuthModalOpen.value = true
 }
-
 // 打开注册模态框
 const openRegisterModal = () => {
   isRegisterMode.value = true
   isAuthModalOpen.value = true
 }
-
 // 关闭认证模态框
 const closeAuthModal = () => {
   isAuthModalOpen.value = false
 }
-
 // 切换认证模式
 const toggleAuthMode = () => {
   isRegisterMode.value = !isRegisterMode.value
 }
-
 // 处理登录成功
 const handleLoginSuccess = async (user) => {
   // 更新用户状态
@@ -772,7 +741,6 @@ const handleLoginSuccess = async (user) => {
   // 加载数据
   await loadData()
 }
-
 // 处理搜索
 const handleSearch = async () => {
   // 清除标签筛选，确保搜索结果不受标签影响
@@ -789,20 +757,17 @@ const handleSearch = async () => {
     await bookmarkStore.fetchBookmarks(bookmarkStore.currentCategory)
   }
 }
-
 // 清除搜索
 const clearSearch = async () => {
   searchQuery.value = ''
   selectedTag.value = null
   await bookmarkStore.fetchBookmarks(bookmarkStore.currentCategory)
 }
-
 // 清除标签筛选
 const clearTagFilter = async () => {
   selectedTag.value = null
   await bookmarkStore.fetchBookmarks(bookmarkStore.currentCategory)
 }
-
 // 为标签生成不同的背景颜色
 const getTagColorClass = (tag) => {
   // 基于标签名的哈希值生成颜色索引
@@ -830,7 +795,6 @@ const getTagColorClass = (tag) => {
   
   return colors[colorIndex]
 }
-
 // 按标签筛选
 const filterByTag = async (tag) => {
   selectedTag.value = selectedTag.value === tag ? null : tag
@@ -849,7 +813,6 @@ const filterByTag = async (tag) => {
     await bookmarkStore.fetchBookmarks(bookmarkStore.currentCategory)
   }
 }
-
 // 高亮关键词
 const highlightKeywords = (text, keywords) => {
   if (!keywords) return text
@@ -857,7 +820,6 @@ const highlightKeywords = (text, keywords) => {
   const regex = new RegExp(`(${keywords.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi')
   return text.replace(regex, '<span class="bg-yellow-200 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-200">$1</span>')
 }
-
 // 打开导入模态框
 const openImportModal = () => {
   isImportModalOpen.value = true
@@ -865,7 +827,6 @@ const openImportModal = () => {
   importLoading.value = false
   importError.value = ''
 }
-
 // 关闭导入模态框
 const closeImportModal = () => {
   isImportModalOpen.value = false
@@ -873,7 +834,6 @@ const closeImportModal = () => {
   importLoading.value = false
   importError.value = ''
 }
-
 // 处理文件选择
 const handleFileSelect = (event) => {
   const file = event.target.files[0]
@@ -882,7 +842,6 @@ const handleFileSelect = (event) => {
     importError.value = ''
   }
 }
-
 // 处理导入
 const handleImport = async () => {
   if (!importFile) {
@@ -1005,19 +964,16 @@ const handleImport = async () => {
     importLoading.value = false
   }
 }
-
 // 打开导出模态框
 const openExportModal = () => {
   isExportModalOpen.value = true
   exportError.value = ''
 }
-
 // 关闭导出模态框
 const closeExportModal = () => {
   isExportModalOpen.value = false
   exportError.value = ''
 }
-
 // 处理导出
 const handleExport = async () => {
   try {
@@ -1095,12 +1051,10 @@ const handleExport = async () => {
     exportError.value = '导出失败: ' + error.message
   }
 }
-
 // 跳转到书签链接
 const goToBookmark = (url) => {
   window.open(url, '_blank', 'noopener,noreferrer')
 }
-
 // 刷新单个收藏的图标（清除本地缓存 → 重新抓取 → 更新）
 const refreshBookmarkIcon = async (bookmark) => {
   if (!bookmark || !bookmark.url) return
@@ -1149,29 +1103,26 @@ const refreshBookmarkIcon = async (bookmark) => {
     alert('刷新图标失败，请检查网络后重试')
   }
 }
-
 // 关闭所有菜单
 const closeAllMenus = () => {
   isUserMenuOpen.value = false
   isCategoryMenuOpen.value = false
   isTagMenuOpen.value = false
 }
-
 // 为分类生成不同的颜色
 const getCategoryColorClass = (index) => {
   const colors = [
-    'border-blue-500 dark:border-blue-400',
-    'border-purple-500 dark:border-purple-400',
-    'border-green-500 dark:border-green-400',
-    'border-yellow-500 dark:border-yellow-400',
-    'border-red-500 dark:border-red-400',
-    'border-pink-500 dark:border-pink-400',
-    'border-indigo-500 dark:border-indigo-400',
-    'border-teal-500 dark:border-teal-400'
+    'border-l-blue-500/40 dark:border-l-blue-400/40',
+    'border-l-purple-500/40 dark:border-l-purple-400/40',
+    'border-l-green-500/40 dark:border-l-green-400/40',
+    'border-l-yellow-500/40 dark:border-l-yellow-400/40',
+    'border-l-red-500/40 dark:border-l-red-400/40',
+    'border-l-pink-500/40 dark:border-l-pink-400/40',
+    'border-l-indigo-500/40 dark:border-l-indigo-400/40',
+    'border-l-teal-500/40 dark:border-l-teal-400/40'
   ]
   return colors[index % colors.length]
 }
-
 // 为分类图标生成不同的颜色
 const getCategoryIconColorClass = (index) => {
   const colors = [
@@ -1186,7 +1137,6 @@ const getCategoryIconColorClass = (index) => {
   ]
   return colors[index % colors.length]
 }
-
 // 为分类卡片图标生成不同的颜色
 const getCategoryCardIconClass = (index) => {
   const colors = [
@@ -1201,7 +1151,6 @@ const getCategoryCardIconClass = (index) => {
   ]
   return colors[index % colors.length]
 }
-
 // 打开修改密码模态框
 const openChangePasswordModal = () => {
   // 重置表单状态
@@ -1215,12 +1164,10 @@ const openChangePasswordModal = () => {
   changePasswordSuccess.value = ''
   isChangePasswordModalOpen.value = true
 }
-
 // 关闭修改密码模态框
 const closeChangePasswordModal = () => {
   isChangePasswordModalOpen.value = false
 }
-
 // 处理修改密码
 const handleChangePassword = async () => {
   // 表单验证
@@ -1272,6 +1219,5 @@ const handleChangePassword = async () => {
     isChangePasswordLoading.value = false
   }
 }
-
 
 </script>
