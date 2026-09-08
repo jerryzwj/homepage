@@ -62,7 +62,8 @@ async function fetchUrlInfo(url) {
     }
     
     if (!icon) {
-      icon = `https://www.google.com/s2/favicons?domain=${new URL(url).hostname}&sz=64`;
+      // 网页抓取成功但未声明 favicon：直接尝试站点根目录 favicon.ico
+      icon = `https://${new URL(url).hostname}/favicon.ico`;
     }
     
     return {
@@ -71,13 +72,13 @@ async function fetchUrlInfo(url) {
       icon
     };
   } catch (error) {
-    // 第三步：如果抓取失败，使用默认值
+    // 第三步：如果抓取失败，使用兜底图标服务（国内可访问）
     console.error('抓取URL信息失败:', error);
     const hostname = new URL(url).hostname;
     return {
       title: hostname,
       description: `来自 ${hostname} 的链接`,
-      icon: `https://www.google.com/s2/favicons?domain=${hostname}&sz=64`
+      icon: `https://icons.duckduckgo.com/ip3/${hostname}.ico`
     };
   }
 }
