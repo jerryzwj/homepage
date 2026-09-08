@@ -187,7 +187,8 @@
               <div v-for="(category, index) in bookmarkStore.categories" :key="category.cate_id" class="space-y-4">
                 <!-- 分类标题 -->
                 <div class="flex items-center gap-3 glass-section pl-4 border-l-2 py-3 rounded-xl mb-4" :class="getCategoryColorClass(index)">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" :class="getCategoryIconColorClass(index)"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                  <img v-if="category.cate_cover && !coverErrors[category.cate_id]" :src="category.cate_cover" :alt="category.cate_name" class="w-8 h-8 rounded-lg object-cover flex-shrink-0" loading="lazy" @error="onCoverError(category.cate_id)">
+                  <svg v-else xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" :class="getCategoryIconColorClass(index)"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
                   <div class="flex items-center gap-2 flex-1 min-w-0">
                     <h3 class="text-xl font-bold text-gray-900 dark:text-white">{{ category.cate_name }}</h3>
                     <p v-if="category.cate_desc" class="text-xs text-gray-500 dark:text-gray-400">{{ category.cate_desc }}</p>
@@ -554,6 +555,11 @@ const changePasswordSuccess = ref('')
 const searchQuery = ref('')
 // 图标刷新版本号（key: bookmark_id，值递增触发图标组件重载）
 const iconVersions = ref({})
+// 分类封面加载失败记录（key: cate_id，加载失败后回退显示默认文件夹图标）
+const coverErrors = ref({})
+const onCoverError = (cateId) => {
+  coverErrors.value[cateId] = true
+}
 // 标签相关状态
 const selectedTag = ref(null)
 // 计算所有标签
@@ -1055,53 +1061,20 @@ const handleExport = async () => {
 const goToBookmark = (url) => {
   window.open(url, '_blank', 'noopener,noreferrer')
 }
-// 刷新单个收藏的图标（清除本地缓存 → 重新抓取 → 更新）
-const refreshBookmarkIcon = async (bookmark) => {
+// 刷新单个收藏的图标：清除本地缓存后重新加载当前设置的 icon 链接（不重新抓取、不覆盖自定义图标）
+const refreshBookmarkIcon = (bookmark) => {
   if (!bookmark || !bookmark.url) return
   
-  try {
-    // 清除该图标的本地缓存
-    if (bookmark.icon) {
-      try {
-        localStorage.removeItem('favicon_cache_' + bookmark.icon)
-      } catch (e) { /* 忽略 */ }
-    }
-    
-    // 重新抓取网页信息（取最新的 icon）
-    const response = await fetch('/api/fetch-url', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ url: bookmark.url })
-    })
-    
-    if (!response.ok) {
-      alert('刷新图标失败，请稍后重试')
-      return
-    }
-    
-    const urlInfo = await response.json()
-    if (!urlInfo.icon) {
-      alert('未获取到该网站的图标')
-      return
-    }
-    
-    // 更新收藏数据
-    const success = await bookmarkStore.updateBookmark({
-      ...bookmark,
-      icon: urlInfo.icon
-    })
-    
-    if (success) {
-      // 递增版本号，强制图标组件重新加载（即使 icon URL 未变化）
-      iconVersions.value[bookmark.bookmark_id] = (iconVersions.value[bookmark.bookmark_id] || 0) + 1
-      console.log('图标刷新成功:', bookmark.title)
-    }
-  } catch (error) {
-    console.error('刷新图标失败:', error)
-    alert('刷新图标失败，请检查网络后重试')
+  // 清除该图标的本地缓存
+  if (bookmark.icon) {
+    try {
+      localStorage.removeItem('favicon_cache_' + bookmark.icon)
+    } catch (e) { /* 忽略 */ }
   }
+  
+  // 递增版本号，强制图标组件重新加载当前设置的 icon 链接
+  iconVersions.value[bookmark.bookmark_id] = (iconVersions.value[bookmark.bookmark_id] || 0) + 1
+  console.log('图标已刷新:', bookmark.title)
 }
 // 关闭所有菜单
 const closeAllMenus = () => {
